@@ -1,0 +1,198 @@
+
+
+syntax = "proto3";
+
+option java_package = "com.grpc.xbox";
+option java_outer_classname = "xbox"; 
+option objc_class_prefix = "XBOX";
+
+package xBox;
+
+message ADBrowseHomepageReq
+{
+}
+
+enum TaskStatusDef {
+	TaskStatusDownloading    				= 0;	//正在下载中
+	TaskStatusDownloadFailed   				= 1;    //下载失败状态
+	TaskStatusWaitingForDownload			= 2;	//等待下载
+	TaskStatusDownloadCompleted				= 3;	//下载完成状态
+}
+
+//每个视频对象	
+message vObject
+{
+	int32			videoID				= 1;
+	string   		videoTitle			= 2;
+	string 		videoImagePath		= 3;	//设备上图片获取 /MediaItems/28.jpg
+	int32			videoPrivate		= 4;
+	TaskStatusDef  videoStatus			= 5;    //一组中如果有一个视频可以播放，就是播放中。       
+}
+
+//每个视频文件对象，每一集电视剧一个对象
+message vObjectPlay
+{
+	int32			playID				= 1;
+	int32			playEpisodeNum		= 2;
+	string			playEpisodeTitile	= 3;
+	string			playEpisodeUrl		= 4;
+	string 		playEpisodeTime		= 5;
+	TaskStatusDef  videoStatus			= 13;   //针对每个视频文件的下载状态
+}
+
+//每个视频对象详细信息
+message vObjectDetail
+{
+	int32			videoID				= 1;
+	string   		videoTitle			= 2;
+	string 		videoImagePath		= 3;	//设备上图片获取 /MediaItems/28.jpg
+	string			videoScore			= 4;
+	string 		videoReleaseDate	= 5;
+	int64			videoClassification = 6;	//使用位运算去处理，筛选速度会快
+	string			videoRegion			= 7;
+	string			videoStarring		= 8;
+	string			videoDirector		= 9;
+	string			videoSynopsis		= 10;
+	vObjectPlay	videoPlayGroup		= 11;
+	int32			videoPrivate		= 12;
+}
+
+message vObjectGroup
+{
+	int32			channelID			= 1; 	//0 banner, 其他表示类别id
+	string			channelName			= 2;
+	repeated vObject		videoObject			= 3;
+}
+
+message ADBrowseHomepageRsp
+{
+	repeated vObjectGroup	homepageGroup		= 1;	
+}
+
+//浏览channel page页请求，获取channel 所有的列表
+message ADBrowseChannelPageReq
+{
+}
+
+message vChannel
+{
+	int32			channelID			= 1;
+	string			channelName			= 2;
+	string			channelIconPath		= 3;
+}
+
+message ADBrowseChannelPageRsp
+{
+	repeated vChannel		channelGroup		= 1;
+}
+
+//浏览每个channel的内容
+message ADBrowseChannelReq
+{
+	int32			channelID			= 1;
+}
+
+message ADBrowseChannelRsp
+{
+	int32			channelID			= 1;
+	repeated string			region				= 2;
+	repeated int64			classification 		= 3;
+	repeated int32			year				= 4;
+	repeated vObject		vedioObject			= 5;	//默认给3的整数倍，给 3 * 8
+}
+
+message ADBrowseCategoryReq
+{
+	int32			channelID			= 1;
+	string			region				= 2;	//字段为空，代表不区分地区
+	int64			classification 		= 3;	//字段为0，代表不区分类别
+	int32			year				= 4;	//字段为0，代表不区分地区
+	int32 			cacheVideoNum		= 5;	//APP已经缓存到本地的video数量
+}
+
+
+message ADBrowseCategoryRsp
+{
+	repeated vObject		vedioObject			= 5;
+}
+
+message ADBrowseTaskReq
+{
+}
+
+message vObjectTask
+{
+	int32 			taskID				= 1;
+	string			playEpisodeTitile	= 2;
+	string			process				= 3;	//已经下载完成的task是没有进度的
+	string			size				= 4;
+	TaskStatusDef  status				= 5;
+	string			createTime			= 6;
+	int32			videoID				= 7;	//视频对象ID
+	int32			playID				= 8;	//视频文件对象ID
+	int32 			palyUrl				= 9;	//播放url 
+}
+
+message ADBrowseTaskRsp
+{
+	repeated vObjectTask 	taskGroup			= 1;
+}
+
+message ADDeleteTaskReq
+{
+	repeated int32			taskID				= 1;    //支持同时删除多个task
+}
+
+message ADDeleteTaskRsp
+{
+	int32			retCode				= 1;
+}
+
+message ADAddTaskReq
+{
+	int32			videoID				= 1;
+	int32			playID				= 2;
+}
+
+message ADAddTaskRsp
+{
+	int32			retCode				= 1;
+}
+
+message ADBrowseVideoReq
+{
+	int32			videoID				= 1;
+}
+
+message ADBrowseVideoRsp
+{
+	vObjectDetail	objectDetail		= 1;
+}
+
+// The vBox service definition.
+service vBox {
+  // Sends a Browse homepage request and get the response
+  rpc BrowseHomepage (ADBrowseHomepageReq) returns (ADBrowseHomepageRsp) {}
+ 
+  // Sends a Browse channel page request and get the response
+  rpc BrowseChannelPage (ADBrowseChannelPageReq) returns (ADBrowseChannelPageRsp) {}
+  
+  // Sends a Browse channel request and get the response
+  rpc BrowseChannel (ADBrowseChannelReq) returns (ADBrowseChannelRsp) {}
+  
+  // Sends a Browse channel request and get the response
+  rpc BrowseCategory (ADBrowseCategoryReq) returns (ADBrowseCategoryRsp) {}
+  
+  // Sends a Browse task request and get the response
+  rpc BrowseTask (ADBrowseTaskReq) returns (ADBrowseTaskRsp) {}
+  
+  // Sends a delete task request and get the response
+  rpc DeleteTask (ADDeleteTaskReq) returns (ADDeleteTaskRsp) {}
+  
+  // Sends a add task request and get the response
+  rpc AddTask (ADAddTaskReq) returns (ADAddTaskRsp) {}
+  
+  // Sends a Browse video request and get the response
+  rpc BrowseVideo (ADBrowseVideoReq) returns (ADBrowseVideoRsp) {} 
+}
+
