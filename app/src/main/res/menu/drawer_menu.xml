@@ -20,30 +20,24 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/aa"
-            android:title="Home" />
+            android:title="主页" />
         <item
             android:id="@+id/nav_messages"
             android:icon="@drawable/aa"
-            android:title="Messages" />
+            android:title="缓存" />
         <item
             android:id="@+id/nav_friends"
             android:icon="@drawable/aa"
-            android:title="Friends" />
-        <item
-            android:id="@+id/nav_discussion"
-            android:icon="@drawable/aa"
-            android:title="Discussion" />
+            android:title="搜索" />
     </group>
 
-    <item android:title="Sub items">
-        <menu>
-            <item
-                android:icon="@drawable/aa"
-                android:title="Sub item 1" />
-            <item
-                android:icon="@drawable/aa"
-                android:title="Sub item 2" />
-        </menu>
-    </item>
+    <group android:checkableBehavior="single">
+        <item
+            android:icon="@drawable/aa"
+            android:title="设置" />
+        <item
+            android:icon="@drawable/aa"
+            android:title="分享" />
+    </group>
 
 </menu>

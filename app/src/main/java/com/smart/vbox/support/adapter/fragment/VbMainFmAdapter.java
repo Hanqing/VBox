@@ -23,8 +23,8 @@ public class VbMainFmAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 return new VbHomeFragment();
-//            case 1:
-//                return new VbVNavigationFragment();
+            case 1:
+                return new VbHomeFragment();
 //            case 2:
 //                return new AcBangumiFragment();
 //            case 3:

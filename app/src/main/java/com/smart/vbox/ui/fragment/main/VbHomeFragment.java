@@ -76,11 +76,11 @@ public class VbHomeFragment extends BaseFragment {
         mAdapter.setSwipeRefreshLayout(mSwipeRefreshLayout);
         mAdapter.setOnClickListener(new VbRecommendRvAdapter.OnClickListener() {
             @Override
-            public void onClick(View view, String partitionType, String contentId) {
+            public void onClick(View view, String partitionType, int contentId) {
                 if (partitionType != null) {
                     //启动分区页面
 //                    VbPartitionVbtivity.startVbtivity(getVbtivity(), partitionType);
-                } else if (contentId != null) {
+                } else {
                     //启动视频信息页面
 //                    VbContentVbtivity.startVbtivity(getVbtivity(), contentId);
                 }
@@ -151,7 +151,8 @@ public class VbHomeFragment extends BaseFragment {
                             mSwipeRefreshLayout.setRefreshing(false);
                             mSwipeRefreshLayout.setEnabled(true);
                         }
-                        /* shutdownChannel(); */ }
+                        /* shutdownChannel(); */
+                    }
                 });
 //        VbRecommend = RetrofitConfig.getVbRecommend();
 //

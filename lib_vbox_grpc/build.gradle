@@ -54,10 +54,5 @@ dependencies {
     compile 'com.google.guava:guava:18.0'
     compile 'com.google.protobuf:protobuf-java:3.0.0-alpha-2'
     compile 'com.google.code.findbugs:jsr305:3.0.0'
-    // we cannot use the following dependency as com.google.auth:google-auth-library-oauth2-http:0.1.0 seems to be unavailable right now
-    //compile 'io.grpc:grpc-all:0.7.1'
 
-    // these libraries are necessary for the server
-    compile 'io.netty:netty-all:4.1.0.Beta5'
-    compile 'com.twitter:hpack:0.11.0'
 }

@@ -2,6 +2,7 @@ package com.smart.vbox.support.adapter.recyclerview;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -53,7 +54,7 @@ public class VbRecommendRvAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public interface OnClickListener {
-        void onClick(View view, String partitionType, String contentId);
+        void onClick(View view, String partitionType, int contentId);
     }
 
     private OnClickListener mOnClickListener;
@@ -126,16 +127,34 @@ public class VbRecommendRvAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof NavigationTitleVH) {
-            ((NavigationTitleVH) holder).tvPartitionTitle.setText("");
+            final xbox.vObjectGroup group = mHomePageGroupList.get(position / 5);
+            ((NavigationTitleVH) holder).tvPartitionTitle.setText(group.getChannelName());
             if (mOnClickListener != null) {
                 ((NavigationTitleVH) holder).btnPartitionMore.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mOnClickListener.onClick(v, null, null);
+                        mOnClickListener.onClick(v, null, group.getChannelID());
                     }
                 });
             }
         } else if (holder instanceof HotVH) {
+            xbox.vObjectGroup group = mHomePageGroupList.get(position / 5);
+            List<xbox.vObject> videoList = group.getVideoObjectList();
+            final xbox.vObject video = videoList.get(position % 5);
+
+            ((HotVH) holder).imgCoverHot.setImageURI(Uri.parse(video.getVideoImagePath()));
+            ((HotVH) holder).tvTitleHot.setText(video.getVideoTitle());
+//            ((HotVH) holder).tvSubTitleHot.setText(entity.getSubtitle());
+
+            if (mOnClickListener != null) {
+                ((HotVH) holder).cardViewHot.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mOnClickListener.onClick(v, null, video.getVideoID());
+                    }
+                });
+            }
+
 //            if (position == 2 | position == 3 | position == 4 | position == 5 && mAcReHot != null) {
 //                final AcReHot.DataEntity.PageEntity.ListEntity entity
 //                        = mAcReHot.getData().getPage().getList().get(position - 2);
@@ -184,9 +203,9 @@ public class VbRecommendRvAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
 
-    public void setCardViewOtherOnClickListener(CardView cardViewOther, final String partitionType, final String contentId) {
+    public void setCardViewOtherOnClickListener(CardView cardViewOther, final String partitionType, final int contentId) {
         if (mOnClickListener != null) {
-            if (partitionType == null && contentId == null) {
+            if (partitionType == null) {
                 cardViewOther.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
