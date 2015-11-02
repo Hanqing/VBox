@@ -2,7 +2,7 @@ package com.smart.vbox.support.callback;
 
 import com.grpc.xbox.xbox;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -12,6 +12,6 @@ import java.util.ArrayList;
  */
 public interface GetVbHomePageHttpResult {
 
-    void onHomePageResult(ArrayList<xbox.vObjectGroup> result);
+    void onHomePageResult(List<xbox.vObjectGroup> result);
 
 }

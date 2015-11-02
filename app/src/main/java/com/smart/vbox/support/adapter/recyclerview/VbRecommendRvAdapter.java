@@ -19,6 +19,7 @@ import com.smart.vbox.support.utils.GlobalUtils;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,7 +34,7 @@ public class VbRecommendRvAdapter extends RecyclerView.Adapter<RecyclerView.View
     private static final int TYPE_NAVIGATION_TITLE = 0;
     private static final int TYPE_CARD_VIEW = 1;
 
-    private ArrayList<xbox.vObjectGroup> mHomePageGroupList = new ArrayList<xbox.vObjectGroup>();
+    private List<xbox.vObjectGroup> mHomePageGroupList = new ArrayList<xbox.vObjectGroup>();
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -41,12 +42,12 @@ public class VbRecommendRvAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.mSwipeRefreshLayout = mSwipeRefreshLayout;
     }
 
-    public ArrayList<xbox.vObjectGroup> getHomePageGroup() {
+    public List<xbox.vObjectGroup> getHomePageGroup() {
         return mHomePageGroupList;
     }
 
     @Override
-    public void onHomePageResult(ArrayList<xbox.vObjectGroup> result) {
+    public void onHomePageResult(List<xbox.vObjectGroup> result) {
         this.mHomePageGroupList = result;
         notifyDataSetChanged();
     }

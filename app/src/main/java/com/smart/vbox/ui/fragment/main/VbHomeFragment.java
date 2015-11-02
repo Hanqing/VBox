@@ -10,13 +10,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.common.util.concurrent.UncheckedExecutionException;
+import com.grpc.xbox.vBoxGrpc;
+import com.grpc.xbox.xbox;
 import com.smart.vbox.R;
 import com.smart.vbox.support.adapter.recyclerview.VbRecommendRvAdapter;
 import com.smart.vbox.support.utils.ViewUtils;
 import com.smart.vbox.ui.fragment.BaseFragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.grpc.ChannelImpl;
+import io.grpc.transport.okhttp.OkHttpChannelBuilder;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * 
@@ -24,9 +37,12 @@ import butterknife.ButterKnife;
  * created at 2015/10/24 10:32
  */
 public class VbHomeFragment extends BaseFragment {
+
+    public static String mHost = " ";
+    public static int mPort = 0;
+    private ChannelImpl mChannel;
     private boolean mIsPrepared;
     private VbRecommendRvAdapter mAdapter;
-//    private VbApi.getVbRecommend VbRecommend;
 
     @Bind(R.id.ac_fragment_recommend_recycler_view)
     RecyclerView mRecyclerView;
@@ -76,15 +92,7 @@ public class VbHomeFragment extends BaseFragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-//                getHttpResult(VbString.BANNER);
-//                getHttpResult(VbString.HOT);
-//                getHttpResult(VbString.ANIMATION);
-//                getHttpResult(VbString.FUN);
-//                getHttpResult(VbString.MUSIC);
-//                getHttpResult(VbString.GAME);
-//                getHttpResult(VbString.SCIENCE);
-//                getHttpResult(VbString.SPORT);
-//                getHttpResult(VbString.TV);
+                getGrpcResult();
                 mSwipeRefreshLayout.setEnabled(false);
             }
         });
@@ -104,7 +112,7 @@ public class VbHomeFragment extends BaseFragment {
                 mSwipeRefreshLayout.post(new Runnable() {
                     @Override
                     public void run() {
-//                        getHttpResult(VbString.HOT);
+                        getGrpcResult();
                         mSwipeRefreshLayout.setRefreshing(true);
                         mSwipeRefreshLayout.setEnabled(false);
                     }
@@ -114,7 +122,37 @@ public class VbHomeFragment extends BaseFragment {
 
     }
 
-    private void getHttpResult(String httpGetType) {
+    private void getGrpcResult() {
+        // ------------網絡請求 ---------
+        Observable.create(new Observable.OnSubscribe<List<xbox.vObjectGroup>>() {
+            @Override
+            public void call(Subscriber<? super List<xbox.vObjectGroup>> subscriber) {
+                try {
+                    if (mChannel == null)
+                        mChannel = OkHttpChannelBuilder.forAddress(mHost, mPort).build();
+                    vBoxGrpc.vBoxBlockingStub vBoxStub = vBoxGrpc.newBlockingStub(mChannel);
+                    xbox.ADBrowseHomepageReq req = xbox.ADBrowseHomepageReq.newBuilder().build();
+                    xbox.ADBrowseHomepageRsp res = vBoxStub.browseHomepage(req);
+
+                    subscriber.onNext(res.getHomepageGroupList());
+                } catch (SecurityException | UncheckedExecutionException e) {
+                    e.printStackTrace();
+                    subscriber.onNext(null);
+                }
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<xbox.vObjectGroup>>() {
+                    @Override
+                    public void call(List<xbox.vObjectGroup> groupList) {
+                        // 进行显示
+                        mAdapter.onHomePageResult(groupList);
+                        if (mSwipeRefreshLayout != null) {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                            mSwipeRefreshLayout.setEnabled(true);
+                        }
+                        /* shutdownChannel(); */ }
+                });
 //        VbRecommend = RetrofitConfig.getVbRecommend();
 //
 //         if (TextUtils.equals(httpGetType, VbString.HOT)) {
