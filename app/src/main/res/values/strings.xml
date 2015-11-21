@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">vBox</string>
 
+    <plurals name="likes_count">
+        <item quantity="one">%d like</item>
+        <item quantity="other">%d likes</item>
+    </plurals>
+
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="open">打开</string>

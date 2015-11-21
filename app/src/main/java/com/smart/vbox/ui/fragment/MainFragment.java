@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 
 import com.smart.vbox.R;
-import com.smart.vbox.support.adapter.fragment.VbMainFmAdapter;
+import com.smart.vbox.support.adapter.fragment.MainFmAdapter;
 import com.smart.vbox.support.utils.ViewUtils;
 import com.smart.vbox.ui.activity.MainActivity;
 
@@ -52,9 +52,9 @@ public class MainFragment extends BaseFragment {
 
         if (mTabLayout != null && mViewPager != null) {
             //设置tab模式,可以滚动
-            mTabLayout.setTabMode(TabLayout.MODE_FIXED);
+            mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
             //mTabLayout.setTabTextColors();
-            VbMainFmAdapter adapter = new VbMainFmAdapter(getFragmentManager());
+            MainFmAdapter adapter = new MainFmAdapter(getFragmentManager());
             //给ViewPager设置适配器
             mViewPager.setAdapter(adapter);
             mViewPager.setOffscreenPageLimit(4);

@@ -1,5 +1,6 @@
 package com.smart.vbox.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -36,13 +37,11 @@ public class MainActivity extends BaseActivity {
 
         setUpDrawerContent(mNavigationView);
 
-
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.add(R.id.fragment_content, new MainFragment());
         ft.commitAllowingStateLoss();
         fm.executePendingTransactions();
-
     }
 
     private void setUpDrawerContent(NavigationView navigationView) {
@@ -66,7 +65,8 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_search:
+                startActivity(new Intent(this, SearchActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);

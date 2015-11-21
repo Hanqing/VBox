@@ -3,6 +3,8 @@ package com.smart.vbox;
 import android.app.Application;
 import android.content.Context;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.smart.vbox.support.config.FrescoConfig;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -39,8 +41,7 @@ public class MyApplication extends Application {
 
         ButterKnife.setDebug(BuildConfig.DEBUG);
 
-//        Fresco.initialize(sInstance, FrescoConfig.getImagePipelineConfig(sInstance));
-
+        Fresco.initialize(sInstance, FrescoConfig.getImagePipelineConfig(sInstance));
     }
 
 }

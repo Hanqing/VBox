@@ -1,13 +1,19 @@
 package com.smart.vbox.support.utils;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Point;
+import android.os.Build;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.smart.vbox.MyApplication;
 import com.smart.vbox.R;
@@ -19,6 +25,9 @@ import com.smart.vbox.R;
  * created at 2015/10/24 10:04
  */
 public class ViewUtils {
+
+    private static int screenWidth = 0;
+    private static int screenHeight = 0;
 
     /**
      * 显示Toolbar 默认标题
@@ -92,5 +101,37 @@ public class ViewUtils {
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+    }
+
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public static int getScreenHeight(Context c) {
+        if (screenHeight == 0) {
+            WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            screenHeight = size.y;
+        }
+
+        return screenHeight;
+    }
+
+    public static int getScreenWidth(Context c) {
+        if (screenWidth == 0) {
+            WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            screenWidth = size.x;
+        }
+
+        return screenWidth;
+    }
+
+    public static boolean isAndroid5() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 }

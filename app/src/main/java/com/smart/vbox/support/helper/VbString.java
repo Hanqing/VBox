@@ -8,5 +8,5 @@ package com.smart.vbox.support.helper;
  */
 public class VbString {
 	public static final String[] MAIN_TITLES = new String[]{
-			"首页推荐", "分区导航"};
+			"小片", "大片"};
 }
