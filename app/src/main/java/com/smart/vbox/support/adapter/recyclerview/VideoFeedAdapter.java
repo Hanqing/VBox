@@ -42,8 +42,9 @@ import io.vov.vitamio.widget.VideoView;
 
 /**
  * 小片列表Adapter
+ *
  * @author lhq
- * created at 2015/11/20 21:08
+ *         created at 2015/11/20 21:08
  */
 public class VideoFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
 
@@ -68,6 +69,21 @@ public class VideoFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void setVideoFeed(List<VBox.VAbstractVideoObject> videoList) {
         mVideoList = videoList;
         notifyDataSetChanged();
+    }
+
+    public List<VBox.VAbstractVideoObject> getVideoFeed() {
+        return mVideoList;
+    }
+
+    public void addVideoFeed(List<VBox.VAbstractVideoObject> videoList) {
+        if (mVideoList != null && videoList != null) {
+            List<VBox.VAbstractVideoObject> newList = new ArrayList<VBox.VAbstractVideoObject>();
+            newList.addAll(mVideoList);
+            newList.addAll(videoList);
+
+            mVideoList = newList;
+            notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -127,8 +143,9 @@ public class VideoFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     /**
      * 自定义播放界面
+     *
      * @author lhq
-     * created at 2015/11/20 21:07
+     *         created at 2015/11/20 21:07
      */
     private class MyMediaController extends MediaController {
 
@@ -272,13 +289,13 @@ public class VideoFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-   /**
-    * 播放视频
-    * @author lhq
-    * created at 2015/11/20 21:19
-    */
-    private void playVideo(VideoView videoView, Uri uri)
-    {
+    /**
+     * 播放视频
+     *
+     * @author lhq
+     * created at 2015/11/20 21:19
+     */
+    private void playVideo(VideoView videoView, Uri uri) {
         videoView.setVisibility(View.VISIBLE);
         videoView.requestFocus();
         videoView.setKeepScreenOn(true);

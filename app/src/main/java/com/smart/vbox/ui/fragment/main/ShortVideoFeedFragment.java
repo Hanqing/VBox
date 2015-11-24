@@ -1,8 +1,5 @@
 package com.smart.vbox.ui.fragment.main;
 
-import android.content.Context;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,12 +9,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.grpc.vbox.VBox;
 import com.grpc.vbox.VBox_ServiceGrpc;
 import com.smart.vbox.R;
+import com.smart.vbox.support.GrpcManager;
 import com.smart.vbox.support.adapter.recyclerview.VideoFeedAdapter;
+import com.smart.vbox.support.utils.GlobalUtils;
 import com.smart.vbox.support.utils.ViewUtils;
 import com.smart.vbox.ui.fragment.BaseFragment;
 
@@ -25,8 +25,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import io.grpc.ChannelImpl;
-import io.grpc.transport.okhttp.OkHttpChannelBuilder;
 import io.vov.vitamio.Vitamio;
 import rx.Observable;
 import rx.Subscriber;
@@ -38,16 +36,15 @@ import rx.schedulers.Schedulers;
  * @author lhq
  *         created at 2015/10/24 10:32
  */
-public class VideoFeedFragment extends BaseFragment implements VideoFeedAdapter.OnFeedItemClickListener {
+public class ShortVideoFeedFragment extends BaseFragment implements VideoFeedAdapter.OnFeedItemClickListener {
 
-
-    public static String HOST = "172.24.1.208";
-    public static int PORT = 8202;
     public static int PAGE_COUNT = 3;
 
-    private ChannelImpl mChannel;
     private boolean mIsPrepared;
     private boolean mIsVitamioReady;
+    private int lastVisibleItem;
+    private boolean isFeedEnd;
+    private boolean isLoading;
 
     private VideoFeedAdapter feedAdapter;
     private boolean pendingIntroAnimation;
@@ -81,7 +78,7 @@ public class VideoFeedFragment extends BaseFragment implements VideoFeedAdapter.
     }
 
     private void setupFeed() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity()) {
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity()) {
             @Override
             protected int getExtraLayoutSpace(RecyclerView.State state) {
                 return 300;
@@ -98,7 +95,28 @@ public class VideoFeedFragment extends BaseFragment implements VideoFeedAdapter.
             @Override
             public void onRefresh() {
                 lazyLoad();
+                isFeedEnd = false;
                 mSwipeRefreshLayout.setEnabled(false);
+            }
+        });
+
+        //RecyclerView滑动监听
+        rvFeed.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (isLoading || isFeedEnd) {
+                    return;
+                }
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 == feedAdapter.getItemCount()) {
+                    loadMore();
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
             }
         });
 
@@ -106,14 +124,46 @@ public class VideoFeedFragment extends BaseFragment implements VideoFeedAdapter.
         lazyLoad();
     }
 
-    public String getLocalMacAddress() {
+    private void loadMore() {
+        Observable.create(new Observable.OnSubscribe<List<VBox.VAbstractVideoObject>>() {
+            @Override
+            public void call(Subscriber<? super List<VBox.VAbstractVideoObject>> subscriber) {
+                try {
+                    isLoading = true;
+                    VBox_ServiceGrpc.VBox_ServiceBlockingStub vBoxStub = GrpcManager.getInstance().getStub();
+                    VBox.ADBrowseShortVideoReq.Builder builder = VBox.ADBrowseShortVideoReq.newBuilder();
+                    // 设置已请求的Video ID
+                    List<VBox.VAbstractVideoObject> videoList = feedAdapter.getVideoFeed();
+                    if (videoList != null && !videoList.isEmpty()) {
+                        for (VBox.VAbstractVideoObject obj : videoList) {
+                            builder.addCachedVideoID(obj.getVideoID());
+                        }
+                    }
+                    VBox.ADBrowseShortVideoReq req = builder.setTerminalMac(GlobalUtils.getLocalMacAddress(getActivity())).setReqVideoNum(PAGE_COUNT).build();
+                    VBox.ADBrowseShortVideoRsp res = vBoxStub.browseShortVideo(req);
 
-        WifiManager wifi = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+                    subscriber.onNext(res.getShortVideopageList());
 
-        WifiInfo info = wifi.getConnectionInfo();
-
-        return info.getMacAddress();
-
+                } catch (SecurityException | UncheckedExecutionException e) {
+                    e.printStackTrace();
+                    subscriber.onNext(null);
+                }
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<VBox.VAbstractVideoObject>>() {
+                    @Override
+                    public void call(List<VBox.VAbstractVideoObject> groupList) {
+                        isLoading = false;
+                        // 进行显示
+                        if (groupList == null || groupList.isEmpty()) {
+                            isFeedEnd = true;
+                            Toast.makeText(getActivity(), "没有更多啦~", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        feedAdapter.addVideoFeed(groupList);
+                    }
+                });
     }
 
     @Override
@@ -123,11 +173,8 @@ public class VideoFeedFragment extends BaseFragment implements VideoFeedAdapter.
             @Override
             public void call(Subscriber<? super List<VBox.VAbstractVideoObject>> subscriber) {
                 try {
-                    if (mChannel == null)
-                        mChannel = OkHttpChannelBuilder.forAddress(HOST, PORT).build();
-
-                    VBox_ServiceGrpc.VBox_ServiceBlockingStub vBoxStub = VBox_ServiceGrpc.newBlockingStub(mChannel);
-                    VBox.ADBrowseShortVideoReq req = VBox.ADBrowseShortVideoReq.newBuilder().setTerminalMac(getLocalMacAddress()).setReqVideoNum(10).build();
+                    VBox_ServiceGrpc.VBox_ServiceBlockingStub vBoxStub = GrpcManager.getInstance().getStub();
+                    VBox.ADBrowseShortVideoReq req = VBox.ADBrowseShortVideoReq.newBuilder().setTerminalMac(GlobalUtils.getLocalMacAddress(getActivity())).setReqVideoNum(PAGE_COUNT).build();
                     VBox.ADBrowseShortVideoRsp res = vBoxStub.browseShortVideo(req);
 
                     subscriber.onNext(res.getShortVideopageList());
@@ -152,6 +199,10 @@ public class VideoFeedFragment extends BaseFragment implements VideoFeedAdapter.
                     @Override
                     public void call(List<VBox.VAbstractVideoObject> groupList) {
                         // 进行显示
+                        if (groupList == null || groupList.isEmpty()) {
+                            isFeedEnd = true;
+                            return;
+                        }
                         feedAdapter.setVideoFeed(groupList);
                         if (mSwipeRefreshLayout != null) {
                             mSwipeRefreshLayout.setRefreshing(false);

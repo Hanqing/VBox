@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/connect_wireless_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_centerHorizontal="true"
+    android:layout_gravity="center"
+    card_view:cardElevation="3dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="7dp">
+
+        <ImageView
+            android:id="@+id/wifi_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/wifi_icon" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/wifi_pwd_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/wifi_icon"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="@dimen/margin_horizontal"
+            android:layout_marginRight="@dimen/margin_horizontal"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/wifi_pwd_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:hint="输入WIFI密码"
+                android:inputType="textPersonName"
+                android:maxLength="10" />
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/connect_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/wifi_pwd_layout"
+            android:layout_marginRight="@dimen/margin_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="连接"
+            android:textColor="@color/purple_base_dark"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

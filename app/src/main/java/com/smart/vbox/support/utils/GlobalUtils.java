@@ -8,6 +8,8 @@ import android.content.res.TypedArray;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -423,13 +425,6 @@ public class GlobalUtils {
         return -1;
     }
 
-//	public static String getHandSetInfo() {
-//		String handSetInfo =
-//				"手机型号:" + android.os.Build.MODEL
-//						+ ",系统版本:" + android.os.Build.VERSION.RELEASE;
-//		return handSetInfo;
-//
-//	}
 
     /**
      * Base64 编码
@@ -475,4 +470,14 @@ public class GlobalUtils {
         return baos.toString("UTF-8");
     }
 
+    /**
+     * 获取MAC地址
+     * @param context
+     * @return
+     */
+    public static String getLocalMacAddress(Context context) {
+        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = wifi.getConnectionInfo();
+        return info.getMacAddress();
+    }
 }

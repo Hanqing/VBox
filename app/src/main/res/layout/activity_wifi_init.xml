@@ -15,20 +15,10 @@
         app:navigationIcon="@drawable/ic_action_back"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        <android.support.v7.widget.SearchView
-            android:id="@+id/search_view"
-            android:layout_width="300dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="70dp"
-            android:iconifiedByDefault="true"
-            android:imeOptions="actionSearch"
-            android:inputType="textCapWords"
-            android:queryHint="搜索视频，电视剧或者主演" />
-
     </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_video_search"
+        android:id="@+id/rv_network"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,6 +27,7 @@
         android:paddingLeft="@dimen/rv_margin"
         android:paddingRight="@dimen/rv_margin"
         android:paddingTop="@dimen/rv_margin"
+        android:layout_below="@id/toolbar"
         android:scrollbars="none">
     </android.support.v7.widget.RecyclerView>
 </RelativeLayout>

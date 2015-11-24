@@ -5,7 +5,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.smart.vbox.support.helper.VbString;
-import com.smart.vbox.ui.fragment.main.VideoFeedFragment;
+import com.smart.vbox.ui.fragment.main.MovieFeedFragment;
+import com.smart.vbox.ui.fragment.main.ShortVideoFeedFragment;
 
 /**
  * 主页Fragment适配器
@@ -22,9 +23,9 @@ public class MainFmAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new VideoFeedFragment();
+                return new ShortVideoFeedFragment();
             case 1:
-                return new VideoFeedFragment();
+                return new MovieFeedFragment();
 //            case 2:
 //                return new AcBangumiFragment();
 //            case 3:

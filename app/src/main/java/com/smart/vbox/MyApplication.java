@@ -2,6 +2,8 @@ package com.smart.vbox;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.smart.vbox.support.config.FrescoConfig;
@@ -12,10 +14,11 @@ import butterknife.ButterKnife;
 
 /**
  * Application类
+ *
  * @author lhq
- * created at 2015/10/22 21:05
+ *         created at 2015/10/22 21:05
  */
-public class MyApplication extends Application {
+public class MyApplication extends MultiDexApplication {
 
     private static MyApplication sInstance;
 
@@ -29,6 +32,11 @@ public class MyApplication extends Application {
         MyApplication application = (MyApplication) context.getApplicationContext();
 
         return application.refWatcher;
+    }
+
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     @Override

@@ -12,4 +12,6 @@
 
     <dimen name="rv_margin">8dp</dimen>
     <dimen name="rv_bottom">8dp</dimen>
+
+    <dimen name="margin_horizontal">16dp</dimen>
 </resources>
