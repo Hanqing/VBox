@@ -25,6 +25,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.vov.vitamio.LibsChecker;
 import io.vov.vitamio.Vitamio;
 import rx.Observable;
 import rx.Subscriber;
@@ -62,11 +63,14 @@ public class ShortVideoFeedFragment extends BaseFragment implements VideoFeedAda
         ButterKnife.bind(this, view);
 
         //检查播放器有没有初始化
-        if (!Vitamio.isInitialized(getActivity())) {
-            mIsVitamioReady = Vitamio.initialize(getActivity(), this.getResources().getIdentifier("libarm", "raw", getActivity().getPackageName()));
-        } else {
-            mIsVitamioReady = true;
-        }
+//        if (!Vitamio.isInitialized(getActivity())) {
+//            mIsVitamioReady = Vitamio.initialize(getActivity(), this.getResources().getIdentifier("libarm", "raw", getActivity().getPackageName()));
+//        } else {
+//            mIsVitamioReady = true;
+//        }
+
+        if (!LibsChecker.checkVitamioLibs(getActivity()))
+            return null;
         setupFeed();
 
         if (savedInstanceState == null) {
@@ -198,16 +202,16 @@ public class ShortVideoFeedFragment extends BaseFragment implements VideoFeedAda
                 .subscribe(new Action1<List<VBox.VAbstractVideoObject>>() {
                     @Override
                     public void call(List<VBox.VAbstractVideoObject> groupList) {
+                        if (mSwipeRefreshLayout != null) {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                            mSwipeRefreshLayout.setEnabled(true);
+                        }
                         // 进行显示
                         if (groupList == null || groupList.isEmpty()) {
                             isFeedEnd = true;
                             return;
                         }
                         feedAdapter.setVideoFeed(groupList);
-                        if (mSwipeRefreshLayout != null) {
-                            mSwipeRefreshLayout.setRefreshing(false);
-                            mSwipeRefreshLayout.setEnabled(true);
-                        }
                         /* shutdownChannel(); */
                     }
                 });

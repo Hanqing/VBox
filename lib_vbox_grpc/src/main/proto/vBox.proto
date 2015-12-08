@@ -217,7 +217,7 @@ message VideoInfo
     int32            PlayEpisodeNum           = 2;   //是第几集
     string           PlayEpisodeTitile        = 3;
     string           PlayEpisodePlayUrl       = 4;   //视频URL, 如果下载完成 eg:/MediaItems/28.rmvb, server 不填写
-    string           PlayEpisodeTime          = 5;   //视频时长
+    int32            PlayEpisodeTime          = 5;   //视频时长
     TaskStatusDef    VideoStatus              = 6;   //针对每个视频文件的下载状态, server 不填写
     int32            DownloadProgress         = 7;   //下载进度, server 不填写
 }
@@ -228,7 +228,7 @@ message VObjectInfo
     int32            VideoID                  = 1;
     string           VideoTitle               = 2;
     string           VideoImagePath           = 3;     //设备上图片获取 /MediaItems/28.jpg, server 不填写
-	int32            vScore                   = 4;
+	string           vScore                   = 4;
 	string           vDate                    = 5;     //上映时间
 	int32            VideoClassification      = 6;
 	string           VideoRegion              = 7;
@@ -236,14 +236,15 @@ message VObjectInfo
 	string           VideoDirector            = 9;
 	string           VideoSynopsis            = 10;
 	int32            VEpisodeNums              = 11;
-	int64            VideoType                = 12; 
+	string           VideoType                = 12; 
 	int32            VIsMagnet                = 13;
-	int32            VideoPraiseNum           = 14;     //点赞次数
-    int32            VideoCriticismNum        = 15;     //踩过的次数
-	int32            VideoIsFavous            = 16;     //server 不填写
-	int32            VideoPrivate             = 17;     //server 不填写
-	int32            VideoIsPraiseorCriticism   = 18;   //server 不填写
-    repeated         VideoInfo    VideoPlayGroup        = 19;  
+	int32            VUpdateTime              = 14;
+	int32            VideoPraiseNum           = 15;     //点赞次数
+    int32            VideoCriticismNum        = 16;     //踩过的次数
+	int32            VideoIsFavous            = 17;     //server 不填写
+	int32            VideoPrivate             = 18;     //server 不填写
+	int32            VideoIsPraiseorCriticism   = 19;   //server 不填写
+    repeated         VideoInfo    VideoPlayGroup        = 20;  
 }
 
 /*******************************************************************

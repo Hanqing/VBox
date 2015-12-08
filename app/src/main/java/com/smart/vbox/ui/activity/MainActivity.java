@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.smart.vbox.R;
+import com.smart.vbox.ui.NavigationHeader;
 import com.smart.vbox.ui.fragment.MainFragment;
 
 import butterknife.Bind;
@@ -18,8 +20,9 @@ import butterknife.ButterKnife;
 
 /**
  * 主页
+ *
  * @author lhq
- * created at 2015/10/24 10:28
+ *         created at 2015/10/24 10:28
  */
 public class MainActivity extends BaseActivity {
 
@@ -28,6 +31,8 @@ public class MainActivity extends BaseActivity {
 
     @Bind(R.id.nav_view)
     NavigationView mNavigationView;
+
+    private NavigationHeader mNavigationHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +55,33 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
+                        switch (menuItem.getItemId()) {
+                            case R.id.nav_clip:
+                                //TODO
+                                break;
+                        }
                         mDrawerLayout.closeDrawers();
                         return true;
                     }
                 });
+
+        mNavigationHeader = new NavigationHeader(this, mNavigationView);
+        mNavigationHeader.bindData();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mNavigationHeader.bindData();
     }
 
     @Override

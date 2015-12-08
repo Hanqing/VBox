@@ -36,6 +36,9 @@
     <color name="gray">#808080</color>
 
 
+    <color name="search_hint">#b2a2d0</color>
+
+
     <color name="md_amber_100">#ffecb3</color>
     <color name="md_amber_200">#ffe082</color>
     <color name="md_amber_300">#ffd54f</color>

@@ -20,9 +20,8 @@ import com.smart.vbox.R;
 
 
 /**
- *
  * @author lhq
- * created at 2015/10/24 10:04
+ *         created at 2015/10/24 10:04
  */
 public class ViewUtils {
 
@@ -45,6 +44,30 @@ public class ViewUtils {
             }
         }
     }
+
+    /**
+     * 显示Toolbar 默认标题
+     *
+     * @param context
+     * @param toolbar
+     */
+    public static void setToolbarAsBack(final AppCompatActivity context, Toolbar toolbar, String title) {
+        context.setSupportActionBar(toolbar);
+        toolbar.setTitle(title);
+        ActionBar actionBar = context.getSupportActionBar();
+        if (actionBar != null) {
+
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    context.onBackPressed();
+                }
+            });
+        }
+    }
+
 
     /**
      * 显示Toolbar 添加自定义标题

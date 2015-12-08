@@ -2,14 +2,16 @@ package com.smart.vbox.ui.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.squareup.leakcanary.RefWatcher;
 import com.smart.vbox.MyApplication;
 
 /**
  * 基础类
+ *
  * @author lhq
- * created at 2015/10/24 9:47
+ *         created at 2015/10/24 9:47
  */
 public class BaseActivity extends AppCompatActivity {
 
@@ -23,5 +25,9 @@ public class BaseActivity extends AppCompatActivity {
         super.onDestroy();
         RefWatcher refWatcher = MyApplication.getRefWatcher(this);
         refWatcher.watch(this);
+    }
+
+    protected <T extends View> T findView(int id) {
+        return (T) super.findViewById(id);
     }
 }

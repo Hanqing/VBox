@@ -3,21 +3,24 @@ package com.smart.vbox.ui.activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
 
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.grpc.vbox.VBox;
 import com.grpc.vbox.VBox_ServiceGrpc;
 import com.smart.vbox.R;
 import com.smart.vbox.support.GrpcManager;
-import com.smart.vbox.support.adapter.recyclerview.SearchResultAdapter;
+import com.smart.vbox.support.adapter.recyclerview.VOBResultAdapter;
 import com.smart.vbox.support.utils.GlobalUtils;
 
 import java.util.List;
@@ -33,10 +36,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Hanqing on 2015/11/21.
  */
-public class SearchActivity extends BaseActivity implements SearchResultAdapter.OnFeedItemClickListener{
-
-    @Bind(R.id.toolbar)
-    Toolbar mToolbar;
+public class SearchActivity extends BaseActivity implements VOBResultAdapter.OnFeedItemClickListener {
 
     @Bind(R.id.search_view)
     SearchView mSearchView;
@@ -44,9 +44,12 @@ public class SearchActivity extends BaseActivity implements SearchResultAdapter.
     @Bind(R.id.rv_video_search)
     RecyclerView rvSearchResult;
 
+    @Bind(R.id.searchback)
+    ImageButton searchBack;
+
     private InputMethodManager inputMethodManager;
-    private String currentSearchTip;
-    private SearchResultAdapter searchAdapter;
+    private String currentQueryText;
+    private VOBResultAdapter searchAdapter;
 
     private int lastVisibleItem;
     private boolean isFeedEnd;
@@ -58,9 +61,8 @@ public class SearchActivity extends BaseActivity implements SearchResultAdapter.
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
 
-        setSupportActionBar(mToolbar);
-        setupFeed();
         setSearchView();
+        setupFeed();
     }
 
     private void setupFeed() {
@@ -72,7 +74,7 @@ public class SearchActivity extends BaseActivity implements SearchResultAdapter.
         };
         rvSearchResult.setLayoutManager(linearLayoutManager);
 
-        searchAdapter = new SearchResultAdapter(this);
+        searchAdapter = new VOBResultAdapter(this);
         searchAdapter.setOnFeedItemClickListener(this);
         rvSearchResult.setAdapter(searchAdapter);
 
@@ -96,56 +98,23 @@ public class SearchActivity extends BaseActivity implements SearchResultAdapter.
             }
         });
 
-    }
-
-    private void loadMore()
-    {
-
-    }
-
-    private void setSearchView() {
-        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        mSearchView.setIconifiedByDefault(true);
-        mSearchView.setIconified(false);
-        if (Build.VERSION.SDK_INT >= 14) {
-            mSearchView.onActionViewExpanded();
-        }
-        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+        searchBack.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onClose() {
-                return true;
-            }
-        });
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
-            public boolean onQueryTextSubmit(String query) {
-                hideSoftInput();
-                search(query);
-                return true;
-            }
-
-            public boolean onQueryTextChange(String newText) {
-                if (newText != null && newText.length() > 0) {
-                    currentSearchTip = newText;
-//                    showSearchTip(newText);
-                }
-                return true;
+            public void onClick(View v) {
+                finish();
             }
         });
 
-        getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
-                        | WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
-    private void search(final String query) {
+    private void loadMore() {
         Observable.create(new Observable.OnSubscribe<List<VBox.VObjectInfo>>() {
             @Override
             public void call(Subscriber<? super List<VBox.VObjectInfo>> subscriber) {
                 try {
+                    isLoading = true;
                     VBox_ServiceGrpc.VBox_ServiceBlockingStub vBoxStub = GrpcManager.getInstance().getStub();
-                    VBox.ADSearchVideoReq req = VBox.ADSearchVideoReq.newBuilder().setTerminalMac(GlobalUtils.getLocalMacAddress(SearchActivity.this)).setSearchKey(query).setPageNum(5).build();
+                    VBox.ADSearchVideoReq req = VBox.ADSearchVideoReq.newBuilder().setTerminalMac(GlobalUtils.getLocalMacAddress(SearchActivity.this)).setSearchKey(currentQueryText).setPageNum(5).build();
                     VBox.ADSearchVideoRsp res = vBoxStub.searchVideo(req);
 
                     subscriber.onNext(res.getSearchObjsList());
@@ -166,7 +135,79 @@ public class SearchActivity extends BaseActivity implements SearchResultAdapter.
                         if (groupList == null || groupList.isEmpty()) {
                             return;
                         }
-//                        feedAdapter.setVideoFeed(groupList);
+                        searchAdapter.setVideoFeed(groupList);
+                        /* shutdownChannel(); */
+                    }
+                });
+    }
+
+    private void setSearchView() {
+        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        mSearchView.setIconifiedByDefault(false);
+        if (Build.VERSION.SDK_INT >= 14) {
+            mSearchView.onActionViewExpanded();
+        }
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                Log.i("xixi", "On Close");
+                return true;
+            }
+        });
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            public boolean onQueryTextSubmit(String query) {
+                hideSoftInput();
+                currentQueryText = query;
+                search();
+                return true;
+            }
+
+            public boolean onQueryTextChange(String newText) {
+                if (newText != null && newText.length() > 0) {
+//                    showSearchTip(newText);
+                }
+                return true;
+            }
+        });
+
+        // text color
+        AutoCompleteTextView searchText = (AutoCompleteTextView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchText.setTextColor(ContextCompat.getColor(this, R.color.white));
+        searchText.setHintTextColor(ContextCompat.getColor(this, R.color.search_hint));
+
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+                        | WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
+    private void search() {
+        Observable.create(new Observable.OnSubscribe<List<VBox.VObjectInfo>>() {
+            @Override
+            public void call(Subscriber<? super List<VBox.VObjectInfo>> subscriber) {
+                try {
+                    VBox_ServiceGrpc.VBox_ServiceBlockingStub vBoxStub = GrpcManager.getInstance().getStub();
+                    VBox.ADSearchVideoReq req = VBox.ADSearchVideoReq.newBuilder().setTerminalMac(GlobalUtils.getLocalMacAddress(SearchActivity.this)).setSearchKey(currentQueryText).setVideoStartSeqNum(1).setPageNum(5).build();
+                    VBox.ADSearchVideoRsp res = vBoxStub.searchVideo(req);
+
+                    subscriber.onNext(res.getSearchObjsList());
+
+                } catch (SecurityException | UncheckedExecutionException e) {
+                    e.printStackTrace();
+                    subscriber.onNext(null);
+                }
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<VBox.VObjectInfo>>() {
+                    @Override
+                    public void call(List<VBox.VObjectInfo> groupList) {
+                        // 进行显示
+                        if (groupList == null || groupList.isEmpty()) {
+                            return;
+                        }
+                        searchAdapter.setVideoFeed(groupList);
                         /* shutdownChannel(); */
                     }
                 });
@@ -187,7 +228,14 @@ public class SearchActivity extends BaseActivity implements SearchResultAdapter.
         }
     }
 
-    public void onCommentsClick(View v, int position) {
+    public void onCommentsClick(View v, VBox.VObjectInfo vObjectInfo) {
+        Log.i("xixi", "" + vObjectInfo.getVideoPlayGroupCount());
+        List<VBox.VideoInfo> videos = vObjectInfo.getVideoPlayGroupList();
+        for (VBox.VideoInfo info : videos)
+        {
+            Log.i("xixi", "INFO : " + info.getPlayEpisodePlayUrl());
+        }
+        VideoPlayActivity.launch(this, vObjectInfo.getVideoPlayGroup(0).getPlayEpisodePlayUrl());
     }
 
     public void onProfileClick(View v) {

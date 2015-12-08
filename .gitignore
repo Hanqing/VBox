@@ -36,3 +36,5 @@ proguard/
 *.iml
 .idea
 captures/
+
+.keystore

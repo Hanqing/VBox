@@ -1,6 +1,7 @@
 package com.smart.vbox.support.adapter.recyclerview;
 
 import android.content.Context;
+import android.net.wifi.ScanResult;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.smart.vbox.R;
-import com.smart.vbox.bean.WirelessNetwork;
 import com.smart.vbox.support.helper.SignalColor;
+import com.smart.vbox.support.utils.CalcUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +27,9 @@ public class NetworkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private Context context;
     private OnFeedItemClickListener onFeedItemClickListener;
-    private List<WirelessNetwork> networkList = new ArrayList<>();
+    private List<ScanResult> networkList = new ArrayList<>();
 
-    public void setNetworkList(List<WirelessNetwork> networkList) {
+    public void setNetworkList(List<ScanResult> networkList) {
         this.networkList = networkList;
         notifyDataSetChanged();
     }
@@ -52,35 +53,35 @@ public class NetworkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void bindDefaultSearchItem(int position, CellFeedViewHolder holder) {
-        final WirelessNetwork network = networkList.get(position);
-        holder.ssid.setText(network.getSsid());
-        holder.bssid.setText(network.getBssid());
-        holder.signal.setText(network.getSignal() + " dBm");
-        holder.signal.setTextColor(SignalColor.getColor(network.getSignal()));
-        holder.channel.setText("Channel" + ": " + network.getChannel());
+        final ScanResult network = networkList.get(position);
+        holder.ssid.setText(network.SSID);
+        holder.bssid.setText(network.BSSID);
+        holder.signal.setText(network.level + " dBm");
+        holder.signal.setTextColor(SignalColor.getColor(network.level));
+        holder.channel.setText("Channel" + ": " + CalcUtils.frequencyConvert(network.frequency));
 
-        holder.itemLayout.setTag(network.getSsid());
+        holder.itemLayout.setTag(network);
 
         /* Check ESS */
-        if (network.getSecurity().contains("ESS")) {
+        if (network.capabilities.contains("ESS")) {
             holder.capBadgeEss.setVisibility(View.VISIBLE);
         } else {
             holder.capBadgeEss.setVisibility(View.INVISIBLE);
         }
 
         /* Check cryptography */
-        if (network.getSecurity().contains("WPA2-")) {
+        if (network.capabilities.contains("WPA2-")) {
             holder.capBadgeCrypto.setImageResource(R.drawable.cap_badge_wpa2);
-        } else if (network.getSecurity().contains("WPA-")) {
+        } else if (network.capabilities.contains("WPA-")) {
             holder.capBadgeCrypto.setImageResource(R.drawable.cap_badge_wpa);
-        } else if (network.getSecurity().contains("WEP")) {
+        } else if (network.capabilities.contains("WEP")) {
             holder.capBadgeCrypto.setImageResource(R.drawable.cap_badge_wep);
         } else {
             holder.capBadgeCrypto.setImageResource(R.drawable.cap_badge_open);
         }
 
         /* Check WPS */
-        if (network.getSecurity().contains("WPS")) {
+        if (network.capabilities.contains("WPS")) {
             holder.capBadgeWps.setVisibility(View.VISIBLE);
         } else {
             holder.capBadgeWps.setVisibility(View.INVISIBLE);
@@ -98,7 +99,7 @@ public class NetworkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         final int viewId = view.getId();
         if (viewId == R.id.network_item_layout) {
             if (onFeedItemClickListener != null) {
-                onFeedItemClickListener.onFeedClick((String) view.getTag());
+                onFeedItemClickListener.onFeedClick((ScanResult) view.getTag());
             }
         }
     }
@@ -133,7 +134,7 @@ public class NetworkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public interface OnFeedItemClickListener {
-        public void onFeedClick(String ssid);
+        public void onFeedClick(ScanResult scanResult);
     }
 
 }

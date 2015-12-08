@@ -1,0 +1,8 @@
+<resources >
+    <item name="ic_menu_clip" type="drawable">@android:drawable/ic_menu_compass</item>
+    <item name="ic_menu_movie" type="drawable">@android:drawable/ic_menu_agenda</item>
+    <item name="ic_menu_search" type="drawable">@android:drawable/ic_menu_search</item>
+    <item name="ic_menu_buy" type="drawable">@android:drawable/ic_menu_send</item>
+    <item name="ic_menu_setting" type="drawable">@android:drawable/ic_menu_set_as</item>
+    <item name="ic_menu_share" type="drawable">@android:drawable/ic_menu_share</item>
+</resources>

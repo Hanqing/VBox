@@ -16,6 +16,7 @@ import com.grpc.vbox.VBox;
 import com.grpc.vbox.VBox_ServiceGrpc;
 import com.smart.vbox.R;
 import com.smart.vbox.support.GrpcManager;
+import com.smart.vbox.support.adapter.recyclerview.VOBResultAdapter;
 import com.smart.vbox.support.adapter.recyclerview.VideoFeedAdapter;
 import com.smart.vbox.support.utils.GlobalUtils;
 import com.smart.vbox.support.utils.ViewUtils;
@@ -36,7 +37,7 @@ import rx.schedulers.Schedulers;
  * @author lhq
  *         created at 2015/10/24 10:32
  */
-public class MovieFeedFragment extends BaseFragment implements VideoFeedAdapter.OnFeedItemClickListener {
+public class MovieFeedFragment extends BaseFragment implements VOBResultAdapter.OnFeedItemClickListener {
     public static int PAGE_COUNT = 3;
 
     private boolean mIsPrepared;
@@ -45,7 +46,7 @@ public class MovieFeedFragment extends BaseFragment implements VideoFeedAdapter.
     private boolean isFeedEnd;
     private boolean isLoading;
 
-    private VideoFeedAdapter feedAdapter;
+    private VOBResultAdapter feedAdapter;
     private boolean pendingIntroAnimation;
 
     @Bind(R.id.rv_video_feed)
@@ -85,7 +86,7 @@ public class MovieFeedFragment extends BaseFragment implements VideoFeedAdapter.
         };
         rvFeed.setLayoutManager(linearLayoutManager);
 
-        feedAdapter = new VideoFeedAdapter(getActivity());
+        feedAdapter = new VOBResultAdapter(getActivity());
         feedAdapter.setOnFeedItemClickListener(this);
         rvFeed.setAdapter(feedAdapter);
 
@@ -124,24 +125,24 @@ public class MovieFeedFragment extends BaseFragment implements VideoFeedAdapter.
     }
 
     private void loadMore() {
-        Observable.create(new Observable.OnSubscribe<List<VBox.VAbstractVideoObject>>() {
+        Observable.create(new Observable.OnSubscribe<List<VBox.VObjectInfo>>() {
             @Override
-            public void call(Subscriber<? super List<VBox.VAbstractVideoObject>> subscriber) {
+            public void call(Subscriber<? super List<VBox.VObjectInfo>> subscriber) {
                 try {
                     isLoading = true;
                     VBox_ServiceGrpc.VBox_ServiceBlockingStub vBoxStub = GrpcManager.getInstance().getStub();
-                    VBox.ADBrowseShortVideoReq.Builder builder = VBox.ADBrowseShortVideoReq.newBuilder();
+                    VBox.BrowseGreatVideoReq.Builder builder = VBox.BrowseGreatVideoReq.newBuilder();
                     // 设置已请求的Video ID
-                    List<VBox.VAbstractVideoObject> videoList = feedAdapter.getVideoFeed();
+                    List<VBox.VObjectInfo> videoList = feedAdapter.getVideoFeed();
                     if (videoList != null && !videoList.isEmpty()) {
-                        for (VBox.VAbstractVideoObject obj : videoList) {
+                        for (VBox.VObjectInfo obj : videoList) {
                             builder.addCachedVideoID(obj.getVideoID());
                         }
                     }
-                    VBox.ADBrowseShortVideoReq req = builder.setTerminalMac(GlobalUtils.getLocalMacAddress(getActivity())).setReqVideoNum(PAGE_COUNT).build();
-                    VBox.ADBrowseShortVideoRsp res = vBoxStub.browseShortVideo(req);
+                    VBox.BrowseGreatVideoReq req = VBox.BrowseGreatVideoReq.newBuilder().setTerminalMac(GlobalUtils.getLocalMacAddress(getActivity())).setReqVideoNum(PAGE_COUNT).build();
+                    VBox.BrowseGreatVideoRsp res = vBoxStub.browseGreatVideo(req);
 
-                    subscriber.onNext(res.getShortVideopageList());
+                    subscriber.onNext(res.getGreatVideosList());
 
                 } catch (SecurityException | UncheckedExecutionException e) {
                     e.printStackTrace();
@@ -150,9 +151,9 @@ public class MovieFeedFragment extends BaseFragment implements VideoFeedAdapter.
                 subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<VBox.VAbstractVideoObject>>() {
+                .subscribe(new Action1<List<VBox.VObjectInfo>>() {
                     @Override
-                    public void call(List<VBox.VAbstractVideoObject> groupList) {
+                    public void call(List<VBox.VObjectInfo> groupList) {
                         isLoading = false;
                         // 进行显示
                         if (groupList == null || groupList.isEmpty()) {
@@ -168,17 +169,17 @@ public class MovieFeedFragment extends BaseFragment implements VideoFeedAdapter.
     @Override
     protected void lazyLoad() {
 
-        Observable.create(new Observable.OnSubscribe<List<VBox.VAbstractVideoObject>>() {
+        Observable.create(new Observable.OnSubscribe<List<VBox.VObjectInfo>>() {
             @Override
-            public void call(Subscriber<? super List<VBox.VAbstractVideoObject>> subscriber) {
+            public void call(Subscriber<? super List<VBox.VObjectInfo>> subscriber) {
                 try {
                     VBox_ServiceGrpc.VBox_ServiceBlockingStub vBoxStub = GrpcManager.getInstance().getStub();
-                    VBox.ADBrowseShortVideoReq req = VBox.ADBrowseShortVideoReq.newBuilder().setTerminalMac(GlobalUtils.getLocalMacAddress(getActivity())).setReqVideoNum(PAGE_COUNT).build();
-                    VBox.ADBrowseShortVideoRsp res = vBoxStub.browseShortVideo(req);
+                    VBox.BrowseGreatVideoReq req = VBox.BrowseGreatVideoReq.newBuilder().setTerminalMac(GlobalUtils.getLocalMacAddress(getActivity())).setReqVideoNum(PAGE_COUNT).build();
+                    VBox.BrowseGreatVideoRsp res = vBoxStub.browseGreatVideo(req);
 
-                    subscriber.onNext(res.getShortVideopageList());
+                    subscriber.onNext(res.getGreatVideosList());
 
-                    Log.i("xixi", "" + res.getShortVideopageList().size());
+                    Log.i("xixi", "" + res.getGreatVideosList().size());
 
 //                  测试数据
 //                    VBox.VAbstractVideoObject ob1 = VBox.VAbstractVideoObject.newBuilder().setVideoTitle("hua qian gu").setVideoID(1).setVideoPosterUrl("https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo_top_ca79a146.png").build();
@@ -194,25 +195,26 @@ public class MovieFeedFragment extends BaseFragment implements VideoFeedAdapter.
                 subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<VBox.VAbstractVideoObject>>() {
+                .subscribe(new Action1<List<VBox.VObjectInfo>>() {
                     @Override
-                    public void call(List<VBox.VAbstractVideoObject> groupList) {
+                    public void call(List<VBox.VObjectInfo> groupList) {
+
+                        if (mSwipeRefreshLayout != null) {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                            mSwipeRefreshLayout.setEnabled(true);
+                        }
                         // 进行显示
                         if (groupList == null || groupList.isEmpty()) {
                             isFeedEnd = true;
                             return;
                         }
                         feedAdapter.setVideoFeed(groupList);
-                        if (mSwipeRefreshLayout != null) {
-                            mSwipeRefreshLayout.setRefreshing(false);
-                            mSwipeRefreshLayout.setEnabled(true);
-                        }
                         /* shutdownChannel(); */
                     }
                 });
     }
 
-    public void onCommentsClick(View v, int position) {
+    public void onCommentsClick(View v, VBox.VObjectInfo vObjectInfo) {
     }
 
     public void onProfileClick(View v) {

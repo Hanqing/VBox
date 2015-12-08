@@ -15,17 +15,20 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.smart.vbox.model.event.WifiScanEvent;
 import com.smart.vbox.support.utils.StringUtils;
+
+import de.greenrobot.event.EventBus;
 
 public class WiFiConnecter {
 
     // Combo scans can take 5-6s to complete
     private static final int WIFI_RESCAN_INTERVAL_MS = 5 * 1000;
+    // 小片宝默认SSID
+    private static final String VBOX_SSID = "yilin";
+    // 小片宝默认SSID PREFEX
+    private static final String VBOX_SSID_PREFEX = "xiaopianbao";
 
-    static final int SECURITY_NONE = 0;
-    static final int SECURITY_WEP = 1;
-    static final int SECURITY_PSK = 2;
-    static final int SECURITY_EAP = 3;
     private static final String TAG = WiFiConnecter.class.getSimpleName();
     public static final int MAX_TRY_COUNT = 3;
 
@@ -42,6 +45,7 @@ public class WiFiConnecter {
     private boolean isRegistered;
     private boolean isActiveScan;
     private boolean bySsidIgnoreCase;
+    private boolean isScanning;
 
     public WiFiConnecter(Context context) {
         this.mContext = context;
@@ -65,8 +69,21 @@ public class WiFiConnecter {
         isRegistered = true;
         bySsidIgnoreCase = true;
         mScanner = new Scanner();
+
+        mScanner.forceScan();
     }
 
+    public void forceScan() {
+        mScanner.forceScan();
+    }
+
+    public void stopScan() {
+        mScanner.pause();
+    }
+
+    public void cancelConnect(){
+        this.mListener = null;
+    }
 
     /**
      * Connect to a WiFi with the given ssid and password
@@ -99,11 +116,27 @@ public class WiFiConnecter {
         mScanner.forceScan();
     }
 
+    /**
+     * 检测连接指定SSID
+     *
+     * @param ssid
+     * @return
+     */
+    public boolean checkConnection(String ssid) {
+        WifiInfo info = mWifiManager.getConnectionInfo();
+        String quotedString = StringUtils.convertToQuotedString(mSsid);
+        boolean ssidEquals = bySsidIgnoreCase ? quotedString.equalsIgnoreCase(info.getSSID())
+                : quotedString.equals(info.getSSID());
+
+        return ssidEquals;
+    }
+
     private void handleEvent(Context context, Intent intent) {
         String action = intent.getAction();
         //An access point scan has completed, and results are available from the supplicant.
         if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action) && isActiveScan) {
             List<ScanResult> results = mWifiManager.getScanResults();
+            EventBus.getDefault().post(new WifiScanEvent(results));
             for (ScanResult result : results) {
                 //1.scan dest of ssid
                 String quotedString = StringUtils.convertToQuotedString(mSsid);

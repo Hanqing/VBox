@@ -6,6 +6,7 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.smart.vbox.model.bean.UserEntity;
 import com.smart.vbox.support.config.FrescoConfig;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
@@ -21,6 +22,8 @@ import butterknife.ButterKnife;
 public class MyApplication extends MultiDexApplication {
 
     private static MyApplication sInstance;
+
+    private UserEntity entity;
 
     public static MyApplication getsInstance() {
         return sInstance;
@@ -50,6 +53,15 @@ public class MyApplication extends MultiDexApplication {
         ButterKnife.setDebug(BuildConfig.DEBUG);
 
         Fresco.initialize(sInstance, FrescoConfig.getImagePipelineConfig(sInstance));
+    }
+
+
+    public void setUserEntity(UserEntity entity) {
+        this.entity = entity;
+    }
+
+    public UserEntity getUserEntity() {
+        return entity;
     }
 
 }

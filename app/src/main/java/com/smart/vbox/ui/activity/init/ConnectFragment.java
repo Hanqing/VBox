@@ -2,7 +2,10 @@ package com.smart.vbox.ui.activity.init;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -13,6 +16,7 @@ import android.view.Window;
 import android.widget.TextView;
 
 import com.smart.vbox.R;
+import com.smart.vbox.support.WiFi;
 import com.smart.vbox.support.WiFiConnecter;
 
 import butterknife.Bind;
@@ -22,9 +26,9 @@ import butterknife.ButterKnife;
 /**
  * Created by Hanqing on 2015/11/24.
  */
-public class ConnectFragment  extends DialogFragment {
+public class ConnectFragment extends DialogFragment {
 
-    private static final String NET_SSID = "network_ssid";
+    private static final String SCAN_RESULT = "scan_result";
 
     @Bind(R.id.wifi_pwd_edit)
     AppCompatEditText wifiPwdEdit;
@@ -32,12 +36,12 @@ public class ConnectFragment  extends DialogFragment {
     @Bind(R.id.connect_confirm)
     TextView connectTv;
 
-    private String mSSID;
+    private ScanResult mScanResult;
 
-    public ConnectFragment newInstance(String ssid) {
+    public ConnectFragment newInstance(ScanResult scanResult) {
         ConnectFragment f = new ConnectFragment();
         Bundle b = new Bundle();
-        b.putString(NET_SSID, ssid);
+        b.putParcelable(SCAN_RESULT, scanResult);
         f.setArguments(b);
 
         return f;
@@ -46,7 +50,7 @@ public class ConnectFragment  extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSSID = getArguments().getString(NET_SSID);
+        mScanResult = getArguments().getParcelable(SCAN_RESULT);
     }
 
     @NonNull
@@ -70,28 +74,8 @@ public class ConnectFragment  extends DialogFragment {
                     return;
                 }
                 //TODO 连接WIFI
-                WiFiConnecter conn = new WiFiConnecter(getActivity());
-                conn.connect(mSSID, wifiPwdEdit.getText().toString(), new WiFiConnecter.ActionListener() {
-                    @Override
-                    public void onStarted(String ssid) {
-                        Log.i("xixi", "onStarted");
-                    }
-
-                    @Override
-                    public void onSuccess(WifiInfo info) {
-                        Log.i("xixi", "onSuccess");
-                    }
-
-                    @Override
-                    public void onFailure() {
-                        Log.i("xixi", "onFailure");
-                    }
-
-                    @Override
-                    public void onFinished(boolean isSuccessed) {
-                        Log.i("xixi", "onFinished");
-                    }
-                });
+                WifiManager mWifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+                WiFi.connectToNewNetwork(mWifiManager, mScanResult, wifiPwdEdit.getText().toString());
             }
         });
 
