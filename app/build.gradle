@@ -37,7 +37,6 @@ dependencies {
     compile project(':vitamio')
     testCompile 'junit:junit:4.12'
     compile project(':lib_vbox_grpc')
-    compile project(':MaterialDesign')
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.android.support:support-v4:+'
     compile 'com.android.support:recyclerview-v7:+'

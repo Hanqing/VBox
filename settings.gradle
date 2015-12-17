@@ -1,1 +1,1 @@
-include ':app', ':lib_vbox_grpc', ':vitamio', ':MaterialDesign'
+include ':app', ':lib_vbox_grpc', ':vitamio'

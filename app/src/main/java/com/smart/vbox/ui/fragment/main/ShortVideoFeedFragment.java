@@ -42,7 +42,6 @@ public class ShortVideoFeedFragment extends BaseFragment implements VideoFeedAda
     public static int PAGE_COUNT = 3;
 
     private boolean mIsPrepared;
-    private boolean mIsVitamioReady;
     private int lastVisibleItem;
     private boolean isFeedEnd;
     private boolean isLoading;
@@ -62,15 +61,9 @@ public class ShortVideoFeedFragment extends BaseFragment implements VideoFeedAda
         View view = inflater.inflate(R.layout.fragment_video_feed, container, false);
         ButterKnife.bind(this, view);
 
-        //检查播放器有没有初始化
-//        if (!Vitamio.isInitialized(getActivity())) {
-//            mIsVitamioReady = Vitamio.initialize(getActivity(), this.getResources().getIdentifier("libarm", "raw", getActivity().getPackageName()));
-//        } else {
-//            mIsVitamioReady = true;
-//        }
-
         if (!LibsChecker.checkVitamioLibs(getActivity()))
             return null;
+
         setupFeed();
 
         if (savedInstanceState == null) {

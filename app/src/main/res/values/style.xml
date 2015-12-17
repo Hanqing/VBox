@@ -45,4 +45,8 @@
         <item name="colorAccent">@color/pink_base</item>
     </style>
 
+    <style name="LoadingProgressbar">
+        <item name="android:indeterminateDrawable">@drawable/loading_progressbar</item>
+    </style>
+
 </resources>

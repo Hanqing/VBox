@@ -17,7 +17,6 @@ import com.grpc.vbox.VBox_ServiceGrpc;
 import com.smart.vbox.R;
 import com.smart.vbox.support.GrpcManager;
 import com.smart.vbox.support.adapter.recyclerview.VOBResultAdapter;
-import com.smart.vbox.support.adapter.recyclerview.VideoFeedAdapter;
 import com.smart.vbox.support.utils.GlobalUtils;
 import com.smart.vbox.support.utils.ViewUtils;
 import com.smart.vbox.ui.fragment.BaseFragment;
@@ -26,7 +25,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import io.vov.vitamio.Vitamio;
+import io.vov.vitamio.LibsChecker;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -41,7 +40,6 @@ public class MovieFeedFragment extends BaseFragment implements VOBResultAdapter.
     public static int PAGE_COUNT = 3;
 
     private boolean mIsPrepared;
-    private boolean mIsVitamioReady;
     private int lastVisibleItem;
     private boolean isFeedEnd;
     private boolean isLoading;
@@ -62,11 +60,9 @@ public class MovieFeedFragment extends BaseFragment implements VOBResultAdapter.
         ButterKnife.bind(this, view);
 
         //检查播放器有没有初始化
-        if (!Vitamio.isInitialized(getActivity())) {
-            mIsVitamioReady = Vitamio.initialize(getActivity(), this.getResources().getIdentifier("libarm", "raw", getActivity().getPackageName()));
-        } else {
-            mIsVitamioReady = true;
-        }
+        if (!LibsChecker.checkVitamioLibs(getActivity()))
+            return null;
+
         setupFeed();
 
         if (savedInstanceState == null) {

@@ -235,7 +235,8 @@ public class SearchActivity extends BaseActivity implements VOBResultAdapter.OnF
         {
             Log.i("xixi", "INFO : " + info.getPlayEpisodePlayUrl());
         }
-        VideoPlayActivity.launch(this, vObjectInfo.getVideoPlayGroup(0).getPlayEpisodePlayUrl());
+//        VideoPlayActivity.launch(this, vObjectInfo.getVideoPlayGroup(0).getPlayEpisodePlayUrl());
+        VideoPlayActivity.launch(this, "");
     }
 
     public void onProfileClick(View v) {
