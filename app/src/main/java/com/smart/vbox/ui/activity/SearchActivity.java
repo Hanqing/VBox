@@ -191,6 +191,7 @@ public class SearchActivity extends BaseActivity implements VOBResultAdapter.OnF
                     VBox.ADSearchVideoReq req = VBox.ADSearchVideoReq.newBuilder().setTerminalMac(GlobalUtils.getLocalMacAddress(SearchActivity.this)).setSearchKey(currentQueryText).setVideoStartSeqNum(1).setPageNum(5).build();
                     VBox.ADSearchVideoRsp res = vBoxStub.searchVideo(req);
 
+                    Log.i("xixi", "res : " + res.getSearchObjsList().size());
                     subscriber.onNext(res.getSearchObjsList());
 
                 } catch (SecurityException | UncheckedExecutionException e) {

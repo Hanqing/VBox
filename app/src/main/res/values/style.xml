@@ -49,4 +49,17 @@
         <item name="android:indeterminateDrawable">@drawable/loading_progressbar</item>
     </style>
 
+    <style name="episode_btn_style">
+        <item name="android:background">@drawable/episode_item_bg</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:visibility">invisible</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
 </resources>

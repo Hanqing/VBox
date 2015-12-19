@@ -27,6 +27,7 @@
 
     <color name="video_play_media_controller">#80000000</color>
     <color name="touming">#00000000</color>
+    <color name="content_gray">#9b9b9b</color>
 
     <!--白色-->
     <color name="white">#FFFFFF</color>

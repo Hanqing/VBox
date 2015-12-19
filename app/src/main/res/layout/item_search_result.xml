@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?><!-- item_feed.xml -->
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -14,15 +16,17 @@
 
         <com.smart.vbox.support.widget.SquaredFrameLayout
             android:id="@+id/fPosterRoot"
-            android:layout_width="100dp"
-            android:layout_height="150dp">
+            android:layout_width="145dp"
+            android:layout_height="218dp">
 
             <!-- 海报 -->
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/ivPoster"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                fresco:placeholderImage="@drawable/splash_bg"
+                fresco:placeholderImageScaleType="fitXY" />
 
         </com.smart.vbox.support.widget.SquaredFrameLayout>
 
@@ -31,28 +35,86 @@
             android:id="@+id/ivVideoTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignTop="@id/fPosterRoot"
             android:layout_marginLeft="16dp"
             android:layout_toRightOf="@id/fPosterRoot"
-            android:layout_alignTop="@id/fPosterRoot"
-            android:text="北上广不相信眼泪"/>
+            android:text="北上广不相信眼泪"
+            android:textColor="@color/purple_base"
+            android:textSize="19sp" />
 
         <!-- 年份 -->
         <TextView
             android:id="@+id/ivVideoYear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/ivVideoTitle"
             android:layout_alignLeft="@id/ivVideoTitle"
-            android:text="年份: 2015"/>
+            android:layout_below="@id/ivVideoTitle"
+            android:layout_marginTop="@dimen/margin_vertical"
+            android:text="年份: 2015"
+            android:textColor="@color/content_gray"
+            android:textSize="16sp" />
 
         <!-- 主演 -->
         <TextView
             android:id="@+id/ivVideoPerformer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/ivVideoYear"
             android:layout_alignLeft="@id/ivVideoTitle"
-            android:text="主演: 马伊琍 朱亚文 张兆辉"/>
+            android:layout_below="@id/ivVideoYear"
+            android:text="主演: 马伊琍 朱亚文 张兆辉"
+            android:textColor="@color/content_gray"
+            android:textSize="16sp" />
 
+        <LinearLayout
+            android:id="@+id/episode_container"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_below="@id/fPosterRoot"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/margin_vertical"
+            android:divider="@drawable/drawable_divider"
+            android:orientation="horizontal"
+            android:showDividers="middle">
+
+            <com.smart.vbox.support.widget.BGABadgeButton
+                android:id="@+id/episode_1"
+                style="@style/episode_btn_style"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="1"
+                app:badge_gravity="rightBottom" />
+
+            <com.smart.vbox.support.widget.BGABadgeButton
+                android:id="@+id/episode_2"
+                style="@style/episode_btn_style"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="2"
+                app:badge_gravity="rightBottom" />
+
+            <com.smart.vbox.support.widget.BGABadgeButton
+                android:id="@+id/episode_3"
+                style="@style/episode_btn_style"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="3"
+                app:badge_gravity="rightBottom" />
+
+            <com.smart.vbox.support.widget.BGABadgeButton
+                android:id="@+id/episode_4"
+                style="@style/episode_btn_style"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="4"
+                app:badge_gravity="rightBottom" />
+
+            <com.smart.vbox.support.widget.BGABadgeButton
+                android:id="@+id/episode_5"
+                style="@style/episode_btn_style"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="5"
+                app:badge_gravity="rightBottom" />
+        </LinearLayout>
     </RelativeLayout>
 </android.support.v7.widget.CardView>

@@ -3,8 +3,8 @@
 
     <declare-styleable name="MyView">
 
-        <attr name="textColor" format="color"/>
-        <attr name="textSize" format="dimension"/>
+        <attr name="textColor" format="color" />
+        <attr name="textSize" format="dimension" />
 
     </declare-styleable>
 
@@ -15,4 +15,7 @@
 
     </style>
 
+    <declare-styleable name="CheckableButton">
+        <attr name="android:checked" />
+    </declare-styleable>
 </resources>

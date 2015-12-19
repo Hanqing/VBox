@@ -447,6 +447,6 @@ service VBox_Service {
   
   // Device Check in server
   rpc DeviceCheckInSer (DSCheckin_Req) returns (DSCheckin_Rsp) {}
-  
-  
+
+
 }
