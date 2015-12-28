@@ -135,7 +135,7 @@ public class MovieFeedFragment extends BaseFragment implements VOBResultAdapter.
                             builder.addCachedVideoID(obj.getVideoID());
                         }
                     }
-                    VBox.BrowseGreatVideoReq req = VBox.BrowseGreatVideoReq.newBuilder().setTerminalMac(GlobalUtils.getLocalMacAddress(getActivity())).setReqVideoNum(PAGE_COUNT).build();
+                    VBox.BrowseGreatVideoReq req = builder.setTerminalMac(GlobalUtils.getLocalMacAddress(getActivity())).setReqVideoNum(PAGE_COUNT).build();
                     VBox.BrowseGreatVideoRsp res = vBoxStub.browseGreatVideo(req);
 
                     subscriber.onNext(res.getGreatVideosList());

@@ -30,6 +30,44 @@ message ADQueryBindingRelationShipRsp
 	BindingRelationShipStatus  status 			= 1;	//绑定状态，0表示已经绑定，1表示未绑定
 }
 
+//一个视频对象下的子集，比如电视剧第几集的详细信息
+message VideoInfo
+{
+    int32            PlayID                   = 1;   //server 不填写
+    string           PlayEpisodeNum           = 2;   //是第几集
+    string           PlayEpisodeTitile        = 3;
+    string           PlayEpisodePlayUrl       = 4;   //视频URL, 如果下载完成 eg:/MediaItems/28.rmvb, server 不填写
+    int32            PlayEpisodeTime          = 5;   //视频时长
+    TaskStatusDef    VideoStatus              = 6;   //针对每个视频文件的下载状态, server 不填写
+    int32            DownloadProgress         = 7;   //下载进度, server 不填写
+}
+
+//每个视频对象详细信息
+message VObjectInfo
+{
+    uint32           VideoID                  = 1;
+    string           VideoTitle               = 2;
+    string           VideoImagePath           = 3;     //设备上图片获取 /MediaItems/28.jpg, server 不填写
+	string           vScore                   = 4;
+	string           vDate                    = 5;     //上映时间
+	int32            VideoClassification      = 6;
+	string           VideoRegion              = 7;
+	string           VStarring                = 8;
+	string           VideoDirector            = 9;
+	string           VideoSynopsis            = 10;
+	int32            VEpisodeNums              = 11;
+	string           VideoType                = 12; 
+	int32            VIsMagnet                = 13;
+	int32            VUpdateTime              = 14;
+	int32            VideoPraiseNum           = 15;     //点赞次数
+    int32            VideoCriticismNum        = 16;     //踩过的次数
+	int32            VideoIsFavous            = 17;     //server 不填写
+	int32            VideoPrivate             = 18;     //server 不填写
+	int32            VideoIsPraiseorCriticism = 19;   //server 不填写
+	int32            VIsAotoDownload          =20;  //是否自动下载，区分大小片
+    repeated         VideoInfo    VideoPlayGroup        = 21;  
+}
+
 //注册前获取短信验证码流程
 message ADPreRegisterReq
 {
@@ -122,7 +160,7 @@ message ADBrowseShortVideoReq
 
 message VAbstractVideoObject
 {
-    int32            VideoID                    = 1;
+    uint32           VideoID                    = 1;
     string           VideoTitle                 = 2;
     int32            VideoPraiseNum             = 3;     //点赞次数
     int32            VideoCriticismNum          = 4;     //踩过的次数
@@ -146,7 +184,7 @@ message ADBrowseShortVideoRsp
 message ADPraiseCriticismVideoReq
 {
 	string			TerminalMac					      = 1;		
-    int32           VideoID                           = 2;
+    uint32          VideoID                           = 2;
     int32           PraiseorCriticism                 = 3;                //1-顶; 2-踩
 }
 
@@ -156,24 +194,25 @@ message ADPraiseCriticismVideoRsp
 }
 
 
+
 /*******************************************************************
 收藏 
 *******************************************************************/
 message ADSetFavourReq
 {
 	string			TerminalMac					      = 1;
-	int32           VideoID                           = 2;           
+	uint32           VideoID                           = 2;           
 }
 
 message ADSetFavourRsp
 {
-	int32    Status                            = 1;
+	int32    Status                            = 1; //0-成功;1-超过设置上限，提示删除旧的，2-其他
 }
 
 message ADUnSetFavourReq
 {
 	string			TerminalMac					      = 1;
-	int32           VideoID                           = 2;           
+	repeated uint32   VideoID                         = 2;           
 }
 
 message ADUnSetFavourRsp
@@ -196,56 +235,20 @@ message ADBrosweFavourRsp
 }
 
 /*******************************************************************
-热门浏览
+热门浏览/大家都在看
 *******************************************************************/
 message ADBrowseHotVideoReq
 {
-	string			TerminalMac					     = 1; 
-	int32	 		HotStartSeqNum					= 3;		//搜索结果的开始编号
-	int32	 		PageNum							= 4;		//本轮请求多少条数据	
+	string			TerminalMac					    = 1; 
+	int32           ItemNum                         = 2;
 }
 
 message ADBrowseHotVideoRsp
 {	
-	repeated string HotSearchKey              		= 1;
+	int32          status                           = 1;
+	repeated VObjectInfo HotVObjects             	= 2;
 }
 
-//一个视频对象下的子集，比如电视剧第几集的详细信息
-message VideoInfo
-{
-    int32            PlayID                   = 1;   //server 不填写
-    int32            PlayEpisodeNum           = 2;   //是第几集
-    string           PlayEpisodeTitile        = 3;
-    string           PlayEpisodePlayUrl       = 4;   //视频URL, 如果下载完成 eg:/MediaItems/28.rmvb, server 不填写
-    int32            PlayEpisodeTime          = 5;   //视频时长
-    TaskStatusDef    VideoStatus              = 6;   //针对每个视频文件的下载状态, server 不填写
-    int32            DownloadProgress         = 7;   //下载进度, server 不填写
-}
-
-//每个视频对象详细信息
-message VObjectInfo
-{
-    int32            VideoID                  = 1;
-    string           VideoTitle               = 2;
-    string           VideoImagePath           = 3;     //设备上图片获取 /MediaItems/28.jpg, server 不填写
-	string           vScore                   = 4;
-	string           vDate                    = 5;     //上映时间
-	int32            VideoClassification      = 6;
-	string           VideoRegion              = 7;
-	string           VStarring                = 8;
-	string           VideoDirector            = 9;
-	string           VideoSynopsis            = 10;
-	int32            VEpisodeNums              = 11;
-	string           VideoType                = 12; 
-	int32            VIsMagnet                = 13;
-	int32            VUpdateTime              = 14;
-	int32            VideoPraiseNum           = 15;     //点赞次数
-    int32            VideoCriticismNum        = 16;     //踩过的次数
-	int32            VideoIsFavous            = 17;     //server 不填写
-	int32            VideoPrivate             = 18;     //server 不填写
-	int32            VideoIsPraiseorCriticism   = 19;   //server 不填写
-    repeated         VideoInfo    VideoPlayGroup        = 20;  
-}
 
 /*******************************************************************
 大片浏览
@@ -277,6 +280,7 @@ message ADSearchVideoReq
 message  DSSearchVideoReq
 {
 	string     SearchKey                       = 1;
+	repeated int32 vID                         = 2;
 }
 
 message  DSSearchVideoRsp
@@ -292,13 +296,30 @@ message ADSearchVideoRsp
     repeated  VObjectInfo   SearchObjs          = 3;	
 }
 
+/*******************************************************************
+相关内容消息定义
+*******************************************************************/
+message ADRelatedVideoReq
+{
+ 	uint32				VideoID					= 1;
+    string   VideoTitle                        	= 2;        //搜索的视频标题
+	string	 VideoEpisode			            = 3;		//第几集
+	int32	 ItemNum							= 4;		//请求多少条数据
+}
+message ADRelatedVideoRsp
+{
+    int32           QueryStatus                 = 1;                //搜索结果码
+	int32			VideoTotalNum				= 2;				//搜索的总数
+    repeated  VObjectInfo   SearchObjs          = 3;	
+}
+
 
 /*******************************************************************
 同步消息定义
 *******************************************************************/
 message SyncVideoUpdateInfo
 {
-	int32				VideoID						= 1;
+	uint32				VideoID						= 1;
 	int32				VideoIsPraiseorCriticism	= 3;			//视频是否被顶踩， 1-顶 2-踩 0-没有变更
 }
 
@@ -309,8 +330,8 @@ message User_Behavior_Stat_Req
 	string MSIDN     = 2;
 	string TerminalMac = 3;
 	int32  TimeStamp   = 4;
-	int32  VideoID     = 5;
-	int32  VEpisodeNum = 6;
+	uint32  VideoID     = 5;
+	string  VEpisodeNum = 6;
 	string VEpisodeTitle = 7;
 	int32  VWatchStatus  = 8;
 	string SearchKey     = 9;
@@ -333,14 +354,12 @@ message DSSyncDataRsp
 	repeated  string	  HotSearchKey			= 3;
 }
 
-
-
 /*******************************************************************
 查询视频详细
 *******************************************************************/
 message ADBrowseVideoDetailReq
 {
-    int32            VideoID                   = 2;
+    uint32            VideoID                   = 2;
 }
 
 message ADBrowseVideoDetailRsp
@@ -353,8 +372,8 @@ message ADBrowseVideoDetailRsp
 *******************************************************************/
 message ADAddTaskReq
 {
-    int32             VideoID             = 1;
-	repeated   int32   PlayIDs            = 2;   //多集或一集
+    uint32             VideoID             = 1;
+	repeated   string  Episodes            = 2;   //多集或一集
 }
 
 message ADAddTaskRsp
@@ -367,8 +386,8 @@ message ADAddTaskRsp
 *******************************************************************/
 message ADDeleteTaskReq
 {
-	int32              VideoID             = 1;
-	repeated   int32   PlayIDs            = 2;   //多集或一集
+	uint32              VideoID             = 1;
+	repeated   string   Episodes            = 2;   //多集或一集
 }
 
 message ADDeleteTaskRsp
@@ -386,9 +405,24 @@ message ADBrowseDownloadReq
 message ADBrowseDownloadRsp
 {
 	repeated VObjectInfo Tasks                = 1;
+	repeated VObjectInfo ToBeDelObjs          = 2;
+}
+
+/*******************************************************************
+保留消息
+*******************************************************************/
+message ADReserveVideoReq
+{
+	uint32  VID                               = 1;
+}
+
+message ADReserveVideoRsp
+{
+	int32  status                            = 1;
 }
 
 //播放记录 App->Device上报播放记录
+/*
 message ADUser_Behavior_Stat_Req
 {
 	repeated User_Behavior_Stat_Req User_PlayHis = 1;
@@ -398,6 +432,7 @@ message ADUser_Behavior_Stat_Rsp
 {
 	int32    RetCode                = 1;
 }
+*/
 
 /*******************************************************************
 网络通了之后checkin 到服务器, 用来同步之前,向服务器登记，获取服务器时间
@@ -440,13 +475,40 @@ service VBox_Service {
   // Add video to favor
   rpc SetVideoFavour (ADSetFavourReq) returns (ADSetFavourRsp)  {}
   
+  // delete favor videos 
+  rpc UnSetVideoFavour (ADUnSetFavourReq) returns (ADUnSetFavourRsp)  {}
+  
+  // browser favor videos
+  rpc BrowseVideoFavour (ADBrosweFavourReq) returns (ADBrosweFavourRsp)  {}
+  
+  // get related video according to one video info
+  rpc GetRelatedVideo (ADRelatedVideoReq) returns (ADRelatedVideoRsp) {}
+  
+  // Browse HotVideo
   rpc BrowseHotVideoReq (ADBrowseHotVideoReq) returns (ADBrowseHotVideoRsp) {}
    
-  // Sends user play history to device 
-  rpc ReportPlayHistory (ADUser_Behavior_Stat_Req) returns (ADUser_Behavior_Stat_Rsp) {}
+  // Reserve Video
+  rpc ReserveVideo (ADReserveVideoReq) returns (ADReserveVideoRsp)  {}
   
+}
+/*******************************************************************
+The server service definition
+protoc -I ./ --grpc_out=. --plugin=protoc-gen-grpc=/usr/local/bin/grpc_cpp_plugin vBox.proto
+protoc -I ./ --cpp_out=. vBox.proto
+*******************************************************************/
+service VBoxServerService {
   // Device Check in server
   rpc DeviceCheckInSer (DSCheckin_Req) returns (DSCheckin_Rsp) {}
+  
+  // Pre_Register user to vbox server
+  rpc PreRegisterUser (DSPreRegisterReq) returns (DSPreRegisterRsp) {}
 
+  // Register user to vbox server
+  rpc RegisterUser (DSRegisterReq) returns (DSRegisterRsp) {}
+  
+  // Search Video in vbox server
+  rpc SearchVideoInServer (DSSearchVideoReq) returns(DSSearchVideoRsp)  {}            
 
+  // Request server to push data
+  rpc SyncDataServer2Device (DSSyncDataReq) returns (DSSyncDataRsp) {}
 }

@@ -21,6 +21,7 @@ import com.smart.vbox.R;
 import com.smart.vbox.support.GrpcManager;
 import com.smart.vbox.support.utils.ViewUtils;
 import com.smart.vbox.support.widget.BGABadgeButton;
+import com.smart.vbox.ui.activity.VideoPlayActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,15 +111,24 @@ public class VOBResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private void bindDefaultSearchItem(int position, CellFeedViewHolder holder) {
         VBox.VObjectInfo video = mVideoList.get(position);
-        Log.i("xixi", "Image url : " + video.getVideoImagePath());
         holder.ivPoster.setImageURI(Uri.parse(video.getVideoImagePath()));
         holder.ivVideoTitle.setText(video.getVideoTitle());
         holder.ivVideoYear.setText(video.getVDate());
         holder.ivVideoPerformer.setText(video.getVideoDirector());
         holder.ivPoster.setTag(video);
+        holder.episode1.setTag(video);
 
         int episodeNums = video.getVEpisodeNums();
         int epHelperNums = Math.min(5, episodeNums);
+
+        Log.i(TAG, "视频" + video.getVideoTitle() + "集数 : " + episodeNums + ", 详情 : " + video.toString());
+
+        List<VBox.VideoInfo> videoList = video.getVideoPlayGroupList();
+        if (videoList == null) {
+            Log.i(TAG, "Video List is NULL");
+        } else {
+            Log.i(TAG, "Video List num : " + videoList.size());
+        }
         if (episodeNums <= 1) {
             holder.episodeContainer.setVisibility(View.GONE);
             return;
@@ -142,23 +152,23 @@ public class VOBResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         for (VBox.VideoInfo info : video.getVideoPlayGroupList()) {
-            Log.i("xixi", "Episode Num : " + info.getPlayEpisodeNum());
+            Log.i(TAG, "视频具体某集详情 : " + info.toString());
             switch (info.getPlayEpisodeNum()) {
-                case 1:
-                    showDownloadState(holder.episode1, info.getVideoStatus());
-                    break;
-                case 2:
-                    showDownloadState(holder.episode2, info.getVideoStatus());
-                    break;
-                case 3:
-                    showDownloadState(holder.episode3, info.getVideoStatus());
-                    break;
-                case 4:
-                    showDownloadState(holder.episode4, info.getVideoStatus());
-                    break;
-                case 5:
-                    showDownloadState(holder.episode5, info.getVideoStatus());
-                    break;
+//                case 1:
+//                    showDownloadState(holder.episode1, info.getVideoStatus());
+//                    break;
+//                case 2:
+//                    showDownloadState(holder.episode2, info.getVideoStatus());
+//                    break;
+//                case 3:
+//                    showDownloadState(holder.episode3, info.getVideoStatus());
+//                    break;
+//                case 4:
+//                    showDownloadState(holder.episode4, info.getVideoStatus());
+//                    break;
+//                case 5:
+//                    showDownloadState(holder.episode5, info.getVideoStatus());
+//                    break;
             }
         }
     }
@@ -222,6 +232,10 @@ public class VOBResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
                 break;
             case R.id.episode_1:
+                VBox.VObjectInfo info = (VBox.VObjectInfo) view.getTag();
+                if (info != null) {
+                    VideoPlayActivity.launch(context, info, 1);
+                }
                 break;
             case R.id.episode_2:
                 break;

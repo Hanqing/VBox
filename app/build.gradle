@@ -55,5 +55,7 @@ dependencies {
     compile 'io.reactivex:rxjava:1.0.14'
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'de.greenrobot:eventbus:2.4.0'
+
+    compile 'com.zhy:flowlayout-lib:1.0.0'
 }
 

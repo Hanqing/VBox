@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.vov.vitamio.LibsChecker;
-import io.vov.vitamio.Vitamio;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -175,8 +173,6 @@ public class ShortVideoFeedFragment extends BaseFragment implements VideoFeedAda
                     VBox.ADBrowseShortVideoRsp res = vBoxStub.browseShortVideo(req);
 
                     subscriber.onNext(res.getShortVideopageList());
-
-                    Log.i("xixi", "" + res.getShortVideopageList().size());
 
 //                  测试数据
 //                    VBox.VAbstractVideoObject ob1 = VBox.VAbstractVideoObject.newBuilder().setVideoTitle("hua qian gu").setVideoID(1).setVideoPosterUrl("https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo_top_ca79a146.png").build();

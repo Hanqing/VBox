@@ -19,6 +19,7 @@
     <color name="font_dark">#1D1E1E</color>
     <color name="font_light">#464e76</color>
     <color name="font_blue">#5178b4</color>
+    <color name="font_gray">#A4A09A</color>
 
     <color name="shadow_white">#66C0C0C0</color>
     <color name="translucence_white">#80FFFFFF</color>
@@ -35,6 +36,10 @@
     <color name="black">#000000</color>
     <!--灰色 -->
     <color name="gray">#808080</color>
+    <!--页面背景灰色 -->
+    <color name="page_gray">#F2F2F2</color>
+    <!--分隔线灰色 -->
+    <color name="divider_gray">#DADADA</color>
 
 
     <color name="search_hint">#b2a2d0</color>

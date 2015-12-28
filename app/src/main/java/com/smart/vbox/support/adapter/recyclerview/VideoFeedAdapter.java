@@ -8,6 +8,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,6 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.grpc.vbox.VBox;
 import com.smart.vbox.R;
-import com.smart.vbox.support.utils.GlobalUtils;
 import com.smart.vbox.support.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -32,6 +32,8 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 
@@ -52,7 +54,7 @@ public class VideoFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private int lastAnimatedPosition = -1;
     private boolean animateItems = false;
 
-    private List<VBox.VAbstractVideoObject> mVideoList = new ArrayList<VBox.VAbstractVideoObject>();
+    private List<VBox.VAbstractVideoObject> mVideoList = new ArrayList<>();
     private final Map<RecyclerView.ViewHolder, AnimatorSet> likeAnimations = new HashMap<>();
     private OnFeedItemClickListener onFeedItemClickListener;
 
@@ -136,60 +138,31 @@ public class VideoFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         resetLikeAnimationState(holder);
     }
 
-    /**
-     * 自定义播放界面
-     *
-     * @author lhq
-     *         created at 2015/11/20 21:07
-     */
-//    private class MyMediaController extends MediaController {
-//
-//        public MyMediaController(Context context, AttributeSet attrs) {
-//            super(context, attrs);
-//        }
-//
-//        public MyMediaController(Context context) {
-//            super(context);
-//        }
-//
-//        public MyMediaController(Context context, boolean fromXml, View container) {
-//            super(context, fromXml, container);
-//        }
-//
-//        @Override
-//        protected View makeControllerView() {
-//            LayoutInflater inflater = GlobalUtils.getLayoutInflater(context);
-//            View view = inflater.inflate(R.layout.video_play_media_controller, null, false);
-//
-//            return view;
-//        }
-//    }
-
     private void setVideoView(CellFeedViewHolder holder) {
 
-//        final MediaController mediaController = new MyMediaController(context, true, holder.fVideoRoot);
-//        holder.mVideoView.setMediaController(mediaController);
-//        //holder.mVideoView.setMediaController(new MediaController(context, true, holder.fVideoRoot));
-//        //在有警告或错误信息时调用。例如：开始缓冲、缓冲结束、下载速度变化。
-//        holder.mVideoView.setOnInfoListener(new OnInfoListener() {
-//            @Override
-//            public boolean onInfo(MediaPlayer mp, int what, int extra) {
-//                return false;
-//            }
-//        });
-//        //在网络视频流缓冲变化时调用。
-//        holder.mVideoView.setOnBufferingUpdateListener(new OnBufferingUpdateListener() {
-//            @Override
-//            public void onBufferingUpdate(MediaPlayer mp, int percent) {
-//
-//            }
-//        });
-//        holder.mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//            @Override
-//            public void onPrepared(MediaPlayer mediaPlayer) {
-//                mediaPlayer.setPlaybackSpeed(1.0f);
-//            }
-//        });
+        final MediaController mediaController = new MediaController(context, true, holder.fVideoRoot);
+        holder.mVideoView.setMediaController(mediaController);
+        mediaController.setVisibility(View.GONE);
+        //在有警告或错误信息时调用。例如：开始缓冲、缓冲结束、下载速度变化。
+        holder.mVideoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+            @Override
+            public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                return false;
+            }
+        });
+        //在网络视频流缓冲变化时调用。
+        holder.mVideoView.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+            @Override
+            public void onBufferingUpdate(MediaPlayer mp, int percent) {
+
+            }
+        });
+        holder.mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                mediaPlayer.setPlaybackSpeed(1.0f);
+            }
+        });
     }
 
 

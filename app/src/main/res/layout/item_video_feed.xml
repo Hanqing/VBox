@@ -16,9 +16,8 @@
         <com.smart.vbox.support.widget.SquaredFrameLayout
             android:id="@+id/fVideoRoot"
             android:layout_width="match_parent"
-            android:layout_height="300dp">
+            android:layout_height="200dp">
 
-            <!-- TODO 替换为播放器组件 -->
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/ivFeedCenter"
                 android:layout_width="match_parent"

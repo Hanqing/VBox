@@ -82,7 +82,7 @@ public class MediaController extends FrameLayout {
     private static final int FADE_OUT = 1;
     private static final int SHOW_PROGRESS = 2;
     private MediaPlayerControl mPlayer;
-    private Activity mContext;
+    private Context mContext;
     private PopupWindow mWindow;
     private int mAnimStyle;
     private View mAnchor;
@@ -134,10 +134,10 @@ public class MediaController extends FrameLayout {
 
         @Override
         public void onClick(View v) {
-            if (mContext.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                mContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            if (((Activity) mContext).getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             } else
-                mContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     };
 
@@ -183,20 +183,20 @@ public class MediaController extends FrameLayout {
         }
     };
 
-    public MediaController(Activity context, AttributeSet attrs) {
+    public MediaController(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRoot = this;
         mFromXml = true;
         initController(context);
     }
 
-    public MediaController(Activity context) {
+    public MediaController(Context context) {
         super(context);
         if (!mFromXml && initController(context))
             initFloatingWindow();
     }
 
-    public MediaController(Activity context, boolean fromXml, View container) {
+    public MediaController(Context context, boolean fromXml, View container) {
         super(context);
         initController(context);
         mFromXml = fromXml;
@@ -207,7 +207,7 @@ public class MediaController extends FrameLayout {
         ((FrameLayout) container).addView(mRoot);
     }
 
-    private boolean initController(Activity context) {
+    private boolean initController(Context context) {
         mContext = context;
         mAM = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         return true;
@@ -462,7 +462,7 @@ public class MediaController extends FrameLayout {
     public boolean onTouchEvent(MotionEvent event) {
         if (mShowing) {
             hide();
-        }else{
+        } else {
             show(sDefaultTimeout);
         }
         return true;
@@ -505,8 +505,7 @@ public class MediaController extends FrameLayout {
         if (mPlayer.isPlaying()) {
             mPauseButton.setImageResource(getResources().getIdentifier("play", "drawable", mContext.getPackageName()));
             mPlayState.setImageResource(getResources().getIdentifier("ib_play", "drawable", mContext.getPackageName()));
-        }
-        else {
+        } else {
             mPauseButton.setImageResource(getResources().getIdentifier("pause", "drawable", mContext.getPackageName()));
             mPlayState.setImageResource(getResources().getIdentifier("ib_pause", "drawable", mContext.getPackageName()));
         }

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
+import android.support.v7.widget.SearchView;
 
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.grpc.vbox.VBox;
@@ -237,7 +237,7 @@ public class SearchActivity extends BaseActivity implements VOBResultAdapter.OnF
             Log.i("xixi", "INFO : " + info.getPlayEpisodePlayUrl());
         }
 //        VideoPlayActivity.launch(this, vObjectInfo.getVideoPlayGroup(0).getPlayEpisodePlayUrl());
-        VideoPlayActivity.launch(this, "");
+        VideoPlayActivity.launch(this, vObjectInfo, 1);
     }
 
     public void onProfileClick(View v) {

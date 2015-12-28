@@ -1,20 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@color/page_gray">
 
     <include
         android:id="@+id/video_layout"
         layout="@layout/item_videoview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="200dp" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <LinearLayout
+        android:id="@+id/video_detail"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="80dp"
         android:layout_below="@id/video_layout"
-        android:fitsSystemWindows="true" />
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/video_title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/margin_horizontal"
+                android:gravity="center_vertical"
+                android:text="芈月传"
+                android:textColor="@color/font_dark"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/video_score"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/margin_horizontal"
+                android:gravity="center_vertical"
+                android:text="9分"
+                android:textColor="@color/font_dark"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginLeft="@dimen/margin_horizontal"
+            android:layout_marginRight="@dimen/margin_horizontal"
+            android:background="@color/divider_gray"></View>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_up"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/margin_horizontal"
+                android:drawableLeft="@drawable/ic_detail_replay_up_pressed"
+                android:gravity="center_vertical"
+                android:text="1万人赞过"
+                android:textColor="@color/font_gray"
+                android:textSize="18sp" />
+
+
+            <ImageView
+                android:id="@+id/iv_collect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/margin_horizontal"
+                android:src="@drawable/ic_detail_replay_collect_pressed" />
+
+            <ImageView
+                android:id="@+id/iv_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/iv_collect"
+                android:src="@drawable/ic_detail_replay_share_pressed" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/video_episode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/video_detail"
+        android:layout_marginTop="@dimen/margin_vertical"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+            <com.smart.vbox.support.widget.IndicatorView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/margin_horizontal" />
+
+            <TextView
+                android:id="@+id/tv_episode_num"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/margin_horizontal"
+                android:drawablePadding="5dp"
+                android:drawableRight="@drawable/ic_common_arrow_right"
+                android:gravity="center_vertical"
+                android:text="共50集"
+                android:textColor="@color/font_gray"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
+        <!-- 集数选择  -->
+        <com.zhy.view.flowlayout.TagFlowLayout
+            android:id="@+id/episode_flowlayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_vertical"
+            android:padding="20dp"
+            app:max_select="1" />
+    </LinearLayout>
 
 </RelativeLayout>
